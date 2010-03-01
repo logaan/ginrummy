@@ -1,0 +1,16 @@
+{% extends "../base.html" %}
+{% block content %}
+<form action="/game/start" method="post">
+  <p>
+    <label for="player_one_name" class="verticle">Your name</label>
+    <input id="player_one_name" name="player_one_name" />
+  </p>
+  <p>
+    <label for="player_two_name" class="verticle">Your friend's name</label>
+    <input id="player_two_name" name="player_two_name" />
+  </p>
+  <p>
+    <input type="submit" value="Start the game!" />
+  </p>
+</form>
+{% endblock %}
