@@ -1,3 +1,4 @@
 *.dump
 *.swp
 *.beam
+Mnesia*
