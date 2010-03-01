@@ -1,4 +1,30 @@
 {% extends "../base.html" %}
 {% block content %}
-<h2>Game between {{ player_one_name }} and {{ player_two_name }}</h2>
+<h1>Game between {{ player_one_name }} and {{ player_two_name }}</h1>
+
+<h2>Your hand</h2>
+<p>10 cards</p>
+<ul>
+  <li><a href="#">King of hearts</a></li>
+  <li><a href="#">Ace of spades</a></li>
+  <li><a href="#">Seven of spades</a></li>
+  <li><a href="#">Two of clubs</a></li>
+  <li><a href="#">King of diamonds</a></li>
+  <li><a href="#">Two of hearts</a></li>
+  <li><a href="#">Four of spades</a></li>
+  <li><a href="#">Jack of clubs</a></li>
+  <li><a href="#">Queen of hearts</a></li>
+  <li><a href="#">Two of diamonds</a></li>
+</ul>
+
+<h2>Game info</h2>
+<dl>
+  <dt>Discard pile</dt>
+  <dd><a href="#">Three of clubs</a></dd>
+  <dt>Library</dt>
+  <dd><a href="#">32 cards left</a></dd>
+  <dt>{{ player_two_name }}'s hand</dt>
+  <dd>10 cards</dd>
+</dl>
+
 {% endblock %}
