@@ -6,14 +6,14 @@ handle_request("start",[]) ->
   PlayerOneName = beepbeep_args:get_param("player_one_name",Env),
   PlayerTwoName = beepbeep_args:get_param("player_two_name",Env),
   {GameName, _} = game_server:start(PlayerOneName, PlayerTwoName),
-  {redirect, lists:concat(["/game/", GameName])};
+  {redirect, lists:concat(["/game/player_one/", GameName])};
 
-handle_request(GameName, []) ->
+handle_request("player_one", [GameName]) ->
   {game_state, Game} = gen_server:call(list_to_atom(GameName), game_state),
   PlayerOne          = Game#game.player1,
   PlayerTwo          = Game#game.player2,
 
-  {render,"game/start.html",[
+  {render,"game/player_one.html",[
     {game,            io_lib:print(Game)},
     {player_one_name, PlayerOne#player.name},
     {player_two_name, PlayerTwo#player.name},
