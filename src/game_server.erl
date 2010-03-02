@@ -22,8 +22,10 @@ handle_call(game_state, _From, State) ->
 
 start(Player1Name, Player2Name) ->
   % GameName = list_to_atom(string:join([io_lib:print(?MODULE), Player1Name, Player2Name], "_")),
-  GameName = game_server,
-  gen_server:start_link({local, GameName}, ?MODULE, [Player1Name, Player2Name], []).
+  % GameName = game_server,
+  GameName = list_to_atom(uuid:to_string(uuid:v4())),
+  io:format("gamename: ~p~n", [GameName]),
+  {GameName, gen_server:start_link({local, GameName}, ?MODULE, [Player1Name, Player2Name], [])}.
 
 stop() ->
   gen_server:call(?MODULE, stop).

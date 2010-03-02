@@ -7,11 +7,13 @@ handle_request("start",[]) ->
     false ->
       PlayerOneName = beepbeep_args:get_param("player_one_name",Env),
       PlayerTwoName = beepbeep_args:get_param("player_two_name",Env),
-      game_server:start(PlayerOneName, PlayerTwoName);
-    true -> ok
+      {GameName, _} = game_server:start(PlayerOneName, PlayerTwoName);
+    true ->
+      GameName = foo,
+      ok
   end,
 
-  {game_state, Game} = gen_server:call(game_server, game_state),
+  {game_state, Game} = gen_server:call(GameName, game_state),
   PlayerOne          = Game#game.player1,
   PlayerTwo          = Game#game.player2,
 
