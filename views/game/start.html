@@ -3,32 +3,32 @@
 <h1>Game between {{ player_one_name }} and {{ player_two_name }}</h1>
 
 <h2>Your hand</h2>
-<p>10 cards</p>
+<p>{{ card_count }} cards</p>
+{% if your_hand %}
 <ul>
-  <li><a href="#">King of hearts</a></li>
-  <li><a href="#">Ace of spades</a></li>
-  <li><a href="#">Seven of spades</a></li>
-  <li><a href="#">Two of clubs</a></li>
-  <li><a href="#">King of diamonds</a></li>
-  <li><a href="#">Two of hearts</a></li>
-  <li><a href="#">Four of spades</a></li>
-  <li><a href="#">Jack of clubs</a></li>
-  <li><a href="#">Queen of hearts</a></li>
-  <li><a href="#">Two of diamonds</a></li>
+{% for card in your_hand %}
+  <li><a href="#">{{ card }}</a></li>
+{% endfor %}
 </ul>
+{% else %}
+  Empty
+{% endif %}
 
 <h2>Game info</h2>
 <dl>
   <dt>Discard pile</dt>
-  <dd><a href="#">Three of clubs</a></dd>
-  <dt>Library</dt>
-  <dd><a href="#">32 cards left</a></dd>
-  <dt>{{ player_two_name }}'s hand</dt>
-  <dd>10 cards</dd>
-</dl>
+  <dd>
+  {% if top_of_discard %}
+    <a href="#">{{ top_of_discard }}</a>
+  {% else %}
+    Empty
+  {% endif %}
+  </dd>
 
-<pre>
-{{ game }}
-</pre>
+  <dt>Library</dt>
+  <dd><a href="#">{{ deck_size }} cards left</a></dd>
+  <dt>{{ player_two_name }}'s hand</dt>
+  <dd>{{ opponent_size }} cards</dd>
+</dl>
 
 {% endblock %}
