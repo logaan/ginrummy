@@ -3,17 +3,13 @@
 -include("records.hrl").
 
 handle_request("start",[]) ->
-  case lists:member(game_server, registered()) of
-    false ->
-      PlayerOneName = beepbeep_args:get_param("player_one_name",Env),
-      PlayerTwoName = beepbeep_args:get_param("player_two_name",Env),
-      {GameName, _} = game_server:start(PlayerOneName, PlayerTwoName);
-    true ->
-      GameName = foo,
-      ok
-  end,
+  PlayerOneName = beepbeep_args:get_param("player_one_name",Env),
+  PlayerTwoName = beepbeep_args:get_param("player_two_name",Env),
+  {GameName, _} = game_server:start(PlayerOneName, PlayerTwoName),
+  {redirect, lists:concat(["/game/", GameName])};
 
-  {game_state, Game} = gen_server:call(GameName, game_state),
+handle_request(GameName, []) ->
+  {game_state, Game} = gen_server:call(list_to_atom(GameName), game_state),
   PlayerOne          = Game#game.player1,
   PlayerTwo          = Game#game.player2,
 
