@@ -12,17 +12,25 @@ handle_request(GameName, ["player_one"]) ->
   {game_state, Game} = gen_server:call(list_to_atom(GameName), game_state),
   PlayerOne          = Game#game.player1,
   PlayerTwo          = Game#game.player2,
+  {render, "game/player_one.html", view_data(Game, PlayerOne, PlayerTwo)};
 
-  {render,"game/player_one.html",[
+handle_request(GameName, ["player_two"]) ->
+  {game_state, Game} = gen_server:call(list_to_atom(GameName), game_state),
+  PlayerOne          = Game#game.player1,
+  PlayerTwo          = Game#game.player2,
+  {render, "game/player_one.html", view_data(Game, PlayerTwo, PlayerOne)}.
+
+view_data(Game, CurrentPlayer, Opponent) ->
+  [
     {game,            io_lib:print(Game)},
-    {player_one_name, PlayerOne#player.name},
-    {player_two_name, PlayerTwo#player.name},
-    {card_count,      length(PlayerOne#player.hand)},
-    {your_hand,       card_list(PlayerOne)},
+    {player_one_name, CurrentPlayer#player.name},
+    {player_two_name, Opponent#player.name},
+    {card_count,      length(CurrentPlayer#player.hand)},
+    {your_hand,       card_list(CurrentPlayer)},
     {top_of_discard,  top_of_discard(Game#game.discard)},
     {deck_size,       length(Game#game.deck)},
-    {opponent_size,   length(PlayerTwo#player.hand)}
-  ]}.
+    {opponent_size,   length(Opponent#player.hand)}
+  ].
 
 card_list(Player) ->
   Hand = Player#player.hand,
@@ -32,3 +40,4 @@ top_of_discard([]) ->
   false;
 top_of_discard([Head|_Tail]) ->
   Head.
+
