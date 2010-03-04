@@ -16,9 +16,13 @@ code_change(_OldVsn, State, _Extra) -> {ok, State}.
 
 handle_call(stop, _From, State) ->
   {stop, normal, State };
- 
+
+handle_call({library_draw, Player}, _From, State) ->
+  NewState = gin_rummy:library_draw(Player, State),
+  {reply, {library_draw, NewState}, NewState};
+
 handle_call(game_state, _From, State) ->
-    {reply, {game_state, State}, State}.
+  {reply, {game_state, State}, State}.
 
 start(Player1Name, Player2Name) ->
   GameName = list_to_atom(uuid:to_string(uuid:v4())),

@@ -22,10 +22,17 @@ handle_request(GameName, []) ->
       beepbeep_args:set_session_data(GameName, player_one, Env),
       view_data(Game, PlayerTwo, PlayerOne)
   end,
-  {render, "game/show.html", ViewData}.
+  {render, "game/show.html", ViewData};
+
+handle_request(GameName, ["library_draw"]) ->
+  AtomicGameName    = list_to_atom(GameName),
+  PlayerNumber      = beepbeep_args:get_session_data(AtomicGameName, Env),
+  {library_draw, _} = gen_server:call(AtomicGameName, {library_draw, PlayerNumber}),
+  {redirect, lists:concat(["/game/", GameName])}.
 
 view_data(Game, CurrentPlayer, Opponent) ->
   [
+    {game_name,       beepbeep_args:get_action(Env)},
     {game,            io_lib:print(Game)},
     {player_one_name, CurrentPlayer#player.name},
     {player_two_name, Opponent#player.name},

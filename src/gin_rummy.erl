@@ -3,7 +3,6 @@
 -include("records.hrl").
 -export([start_game/2, new_deck/0, library_draw/2]).
 
-% Game starting junk
 start_game(Player1Name, Player2Name) ->
   Deck1 = new_deck(),
   {Player1Hand, Deck2} = move(10, [], Deck1),
@@ -12,7 +11,6 @@ start_game(Player1Name, Player2Name) ->
   Player2 = #player{ name = Player2Name, hand = Player2Hand },
   #game{ player1 = Player1, player2 = Player2, deck = Deck3, discard = [] }.
 
-% New deck junk
 new_deck() ->
   shuffle_deck(generate_playing_cards()).
 
@@ -39,7 +37,6 @@ random_draw(Deck) ->
   NewDeck = lists:delete(Card, Deck),
   {Card, NewDeck}.
 
-% Deck manipulation junk
 library_draw(player_one, Game = #game{player1=PlayerOne, deck=Deck}) ->
   {NewHand, NewDeck} = move(PlayerOne#player.hand, Deck),
   NewPlayerOne = PlayerOne#player{hand=NewHand},
