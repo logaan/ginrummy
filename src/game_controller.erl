@@ -6,19 +6,23 @@ handle_request("start",[]) ->
   PlayerOneName = beepbeep_args:get_param("player_one_name",Env),
   PlayerTwoName = beepbeep_args:get_param("player_two_name",Env),
   {GameName, _} = game_server:start(PlayerOneName, PlayerTwoName),
-  {redirect, lists:concat(["/game/", GameName, "/player_one"])};
+  beepbeep_args:set_session_data(GameName, player_one, Env),
+  {redirect, lists:concat(["/game/", GameName])};
 
-handle_request(GameName, ["player_one"]) ->
-  {game_state, Game} = gen_server:call(list_to_atom(GameName), game_state),
+handle_request(GameName, []) ->
+  AtomicGameName     = list_to_atom(GameName),
+  {game_state, Game} = gen_server:call(AtomicGameName, game_state),
   PlayerOne          = Game#game.player1,
   PlayerTwo          = Game#game.player2,
-  {render, "game/player_one.html", view_data(Game, PlayerOne, PlayerTwo)};
 
-handle_request(GameName, ["player_two"]) ->
-  {game_state, Game} = gen_server:call(list_to_atom(GameName), game_state),
-  PlayerOne          = Game#game.player1,
-  PlayerTwo          = Game#game.player2,
-  {render, "game/player_one.html", view_data(Game, PlayerTwo, PlayerOne)}.
+  ViewData = case beepbeep_args:get_session_data(AtomicGameName, Env) of
+    player_one -> view_data(Game, PlayerOne, PlayerTwo);
+    player_two -> view_data(Game, PlayerTwo, PlayerOne);
+    undefined ->
+      beepbeep_args:set_session_data(GameName, player_one, Env),
+      view_data(Game, PlayerTwo, PlayerOne)
+  end,
+  {render, "game/player_one.html", ViewData}.
 
 view_data(Game, CurrentPlayer, Opponent) ->
   [
