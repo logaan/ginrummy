@@ -22,7 +22,7 @@ handle_request(GameName, []) ->
       beepbeep_args:set_session_data(GameName, player_one, Env),
       view_data(Game, PlayerTwo, PlayerOne)
   end,
-  {render, "game/player_one.html", ViewData}.
+  {render, "game/show.html", ViewData}.
 
 view_data(Game, CurrentPlayer, Opponent) ->
   [
