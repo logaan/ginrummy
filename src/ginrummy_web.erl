@@ -56,8 +56,8 @@ loop(Req) ->
 	{static, File} ->
 	    "/" ++ StaticFile = File,
 	    Req:serve_file(StaticFile,ginrummy_deps:local_path(["www"]));
-	{error,_} ->
-	    Req:respond({500,[],"Server Error"})
+	{error,Error} ->
+          Req:respond({500,[],io_lib:print(Error)})
     end.
 
 render_template(ViewFile,Data,Env) -> 
