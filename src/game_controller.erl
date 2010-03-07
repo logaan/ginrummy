@@ -5,9 +5,9 @@
 handle_request("start",[]) ->
   PlayerOneName = beepbeep_args:get_param("player_one_name",Env),
   PlayerTwoName = beepbeep_args:get_param("player_two_name",Env),
-  {GameName, _} = game_server:start(PlayerOneName, PlayerTwoName),
-  beepbeep_args:set_session_data(GameName, player_one, Env),
-  {redirect, lists:concat(["/game/", GameName])};
+  {AtomicGameName, _} = game_server:start(PlayerOneName, PlayerTwoName),
+  beepbeep_args:set_session_data(AtomicGameName, player_one, Env),
+  {redirect, lists:concat(["/game/", AtomicGameName])};
 
 handle_request(GameName, []) ->
   AtomicGameName     = list_to_atom(GameName),
