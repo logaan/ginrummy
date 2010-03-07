@@ -22,6 +22,7 @@ handle_request(GameName, []) ->
       beepbeep_args:set_session_data(GameName, player_one, Env),
       view_data(Game, PlayerTwo, PlayerOne)
   end,
+  chat_server:subscribe(beepbeep_args:get_session_data(AtomicGameName, Env), Game#game.chat_server),
   {render, "game/show.html", ViewData};
 
 handle_request(GameName, ["library_draw"]) ->
@@ -42,11 +43,18 @@ handle_request(GameName, ["discard", CardName]) ->
   {discard, _} = gen_server:call(AtomicGameName, {discard, PlayerNumber, CardName}),
   {redirect, lists:concat(["/game/", GameName])};
 
-handle_request(_GameName, ["comet.json"]) ->
-  timer:sleep(10000),
-  {render, "game/comet.html", [
-      {process_id, io_lib:print(self())}
-    ]}.
+handle_request(GameName, ["comet"]) ->
+  AtomicGameName     = list_to_atom(GameName),
+  PlayerNumber       = beepbeep_args:get_session_data(AtomicGameName, Env),
+  {game_state, Game} = gen_server:call(AtomicGameName, game_state),
+  chat_server:listen(PlayerNumber, self(), Game#game.chat_server),
+  receive
+    {chat_messages, PlayerNumber, Messages} ->
+      {render, "game/comet.html", [
+        {process_id, io_lib:print(self())},
+        {messages, io_lib:print(Messages)}
+      ]}
+  end.
 
 view_data(Game, CurrentPlayer, Opponent) ->
   [

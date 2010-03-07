@@ -2,6 +2,7 @@
 -behaviour(gen_server).
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,terminate/2, code_change/3]).
 -export([start/2, stop/0]).
+-include("records.hrl").
 
 init([Player1Name, Player2Name]) ->
   {ok, gin_rummy:start_game(Player1Name, Player2Name)}.
@@ -19,6 +20,7 @@ handle_call(stop, _From, State) ->
 
 handle_call({library_draw, Player}, _From, State) ->
   NewState = gin_rummy:library_draw(Player, State),
+  chat_server:broadcast("Someone drew a card", State#game.chat_server),
   {reply, {library_draw, NewState}, NewState};
 
 handle_call({discard_draw, Player}, _From, State) ->

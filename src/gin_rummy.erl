@@ -9,7 +9,8 @@ start_game(Player1Name, Player2Name) ->
   {Player2Hand, Deck3} = move(10, [], Deck2),
   Player1 = #player{ name = Player1Name, hand = Player1Hand },
   Player2 = #player{ name = Player2Name, hand = Player2Hand },
-  #game{ player1 = Player1, player2 = Player2, deck = Deck3, discard = [] }.
+  {ok, Pid} = chat_server:start_link(),
+  #game{ player1=Player1, player2=Player2, deck=Deck3, discard=[], chat_server=Pid }.
 
 new_deck() ->
   shuffle_deck(generate_playing_cards()).
