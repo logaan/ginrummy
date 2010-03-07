@@ -6,16 +6,16 @@
 %%% Created :  7 Mar 2010 by Colin Campbell-McPherson <colin@logaan.net>
 %%%-------------------------------------------------------------------
 -module(chat_server).
--define(SERVER, chat_server).
 -behaviour(gen_server).
 
 %% API
--export([start_link/0, subscribe/1, listen/2, state/0, broadcast/1, test/0, test2/0]).
+-export([start_link/0, subscribe/2, listen/3, state/1, broadcast/2, test/0]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
 	 terminate/2, code_change/3]).
 
+% Records
 -record(state, {subscribers=[], listeners=[]}).
 -record(subscriber, {name, messages=[]}).
 -record(listener, {name, process_id}).
@@ -28,15 +28,15 @@
 %% Description: Starts the server
 %%--------------------------------------------------------------------
 start_link() ->
-  gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
-subscribe(Name) ->
-  gen_server:cast(?SERVER, {subscribe, Name}).
-listen(Name, Pid) ->
-  gen_server:cast(?SERVER, {listen, Name, Pid}).
-state() ->
-  gen_server:call(?SERVER, state).
-broadcast(Message) ->
-  gen_server:cast(?SERVER, {broadcast, Message}).
+  gen_server:start_link(?MODULE, [], []).
+subscribe(Name, Pid) ->
+  gen_server:cast(Pid, {subscribe, Name}).
+listen(Name, ListenerPid, Pid) ->
+  gen_server:cast(Pid, {listen, Name, ListenerPid}).
+state(Pid) ->
+  gen_server:call(Pid, state).
+broadcast(Message, Pid) ->
+  gen_server:cast(Pid, {broadcast, Message}).
 
 %%====================================================================
 %% gen_server callbacks
@@ -145,21 +145,17 @@ update_listeners(State = #state{ subscribers=Subscribers, listeners=Listeners })
 %%--------------------------------------------------------------------
 test() ->
   Printer = spawn(fun print_messages/0),
-  chat_server:start_link(),
-  chat_server:subscribe(logan),
-  chat_server:broadcast("hey"),
-  chat_server:subscribe(royce),
-  chat_server:broadcast("lol"),
-  chat_server:subscribe(lyndon),
-  chat_server:broadcast("meow"),
-  chat_server:listen(logan, Printer),
-  chat_server:listen(lyndon, Printer),
+  {ok, Pid} = chat_server:start_link(),
+  chat_server:subscribe(logan, Pid),
+  chat_server:broadcast("hey", Pid),
+  chat_server:subscribe(royce, Pid),
+  chat_server:broadcast("lol", Pid),
+  chat_server:subscribe(lyndon, Pid),
+  chat_server:broadcast("meow", Pid),
+  chat_server:listen(logan, Printer, Pid),
+  chat_server:listen(lyndon, Printer, Pid),
   timer:sleep(100),
-  chat_server:state().
-
-test2() ->
-  Printer = spawn(fun print_messages/0),
-  chat_server:listen(royce, Printer).
+  chat_server:state(Pid).
 
 print_messages() ->
   receive
