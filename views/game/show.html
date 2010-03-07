@@ -1,6 +1,10 @@
 {% extends "../base.html" %}
 {% block content %}
 <h1>Game between you and {{ player_two_name }}</h1>
+<p>
+  {{ player_two_name }} can join the game by visiting:<br />
+  <code>http://localhost:8000/game/{{ game_name }}</code>
+</p>
 
 <h2>Your hand</h2>
 <p>{{ card_count }} cards</p>

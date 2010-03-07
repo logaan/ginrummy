@@ -40,7 +40,11 @@ handle_request(GameName, ["discard", CardName]) ->
   AtomicGameName    = list_to_atom(GameName),
   PlayerNumber      = beepbeep_args:get_session_data(AtomicGameName, Env),
   {discard, _} = gen_server:call(AtomicGameName, {discard, PlayerNumber, CardName}),
-  {redirect, lists:concat(["/game/", GameName])}.
+  {redirect, lists:concat(["/game/", GameName])};
+
+handle_request(_GameName, ["comet.json"]) ->
+  timer:sleep(10000),
+  {render, "game/comet.html", []}.
 
 view_data(Game, CurrentPlayer, Opponent) ->
   [
