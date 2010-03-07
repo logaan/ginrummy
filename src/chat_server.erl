@@ -1,22 +1,23 @@
 %%%-------------------------------------------------------------------
-%%% File    : chat_server.erl
-%%% Author  : Colin Campbell-McPherson <>
+%%% File  : chat_server.erl
+%%% Author  : Colin Campbell-McPherson <colin@logaan.net>
 %%% Description : 
 %%%
-%%% Created :  7 Mar 2010 by Colin Campbell-McPherson <>
+%%% Created :  7 Mar 2010 by Colin Campbell-McPherson <colin@logaan.net>
 %%%-------------------------------------------------------------------
 -module(chat_server).
-
+-define(SERVER, chat_server).
 -behaviour(gen_server).
 
 %% API
--export([start_link/0]).
+-export([start_link/0, subscribe/2, state/1, broadcast/2]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
 	 terminate/2, code_change/3]).
 
--record(state, {}).
+-record(state, {subscribers=[], listeners=[]}).
+-record(subscriber, {name, messages=[]}).
 
 %%====================================================================
 %% API
@@ -26,7 +27,13 @@
 %% Description: Starts the server
 %%--------------------------------------------------------------------
 start_link() ->
-    gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
+  gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
+subscribe(Name, Pid) ->
+  gen_server:cast(Pid, {subscribe, Name}).
+state(Pid) ->
+  gen_server:call(Pid, state).
+broadcast(Message, Pid) ->
+  gen_server:cast(Pid, {broadcast, Message}).
 
 %%====================================================================
 %% gen_server callbacks
@@ -34,44 +41,58 @@ start_link() ->
 
 %%--------------------------------------------------------------------
 %% Function: init(Args) -> {ok, State} |
-%%                         {ok, State, Timeout} |
-%%                         ignore               |
-%%                         {stop, Reason}
+%%             {ok, State, Timeout} |
+%%             ignore         |
+%%             {stop, Reason}
 %% Description: Initiates the server
 %%--------------------------------------------------------------------
 init([]) ->
-    {ok, #state{}}.
+  {ok, #state{}}.
 
 %%--------------------------------------------------------------------
 %% Function: %% handle_call(Request, From, State) -> {reply, Reply, State} |
-%%                                      {reply, Reply, State, Timeout} |
-%%                                      {noreply, State} |
-%%                                      {noreply, State, Timeout} |
-%%                                      {stop, Reason, Reply, State} |
-%%                                      {stop, Reason, State}
+%%                    {reply, Reply, State, Timeout} |
+%%                    {noreply, State} |
+%%                    {noreply, State, Timeout} |
+%%                    {stop, Reason, Reply, State} |
+%%                    {stop, Reason, State}
 %% Description: Handling call messages
 %%--------------------------------------------------------------------
+handle_call(state, _From, State) ->
+  Reply = State,
+  {reply, Reply, State};
 handle_call(_Request, _From, State) ->
-    Reply = ok,
-    {reply, Reply, State}.
+  Reply = ok,
+  {reply, Reply, State}.
 
 %%--------------------------------------------------------------------
 %% Function: handle_cast(Msg, State) -> {noreply, State} |
-%%                                      {noreply, State, Timeout} |
-%%                                      {stop, Reason, State}
+%%                    {noreply, State, Timeout} |
+%%                    {stop, Reason, State}
 %% Description: Handling cast messages
 %%--------------------------------------------------------------------
+handle_cast({broadcast, Message}, State = #state{ subscribers=Subscribers }) ->
+  AddMessage = fun(Subscriber = #subscriber{ messages=Messages }) ->
+    Subscriber#subscriber{ messages=[Message|Messages] }
+  end,
+  NewSubscribers = lists:map(AddMessage, Subscribers),
+  {noreply, State#state{ subscribers=NewSubscribers } };
+
+handle_cast({subscribe, Name}, State = #state{ subscribers=Subscribers }) ->
+  NewSubscriber = #subscriber{ name=Name },
+  {noreply, State#state{ subscribers=[NewSubscriber|Subscribers] } };
+
 handle_cast(_Msg, State) ->
-    {noreply, State}.
+  {noreply, State}.
 
 %%--------------------------------------------------------------------
 %% Function: handle_info(Info, State) -> {noreply, State} |
-%%                                       {noreply, State, Timeout} |
-%%                                       {stop, Reason, State}
+%%                     {noreply, State, Timeout} |
+%%                     {stop, Reason, State}
 %% Description: Handling all non call/cast messages
 %%--------------------------------------------------------------------
 handle_info(_Info, State) ->
-    {noreply, State}.
+  {noreply, State}.
 
 %%--------------------------------------------------------------------
 %% Function: terminate(Reason, State) -> void()
@@ -81,14 +102,14 @@ handle_info(_Info, State) ->
 %% The return value is ignored.
 %%--------------------------------------------------------------------
 terminate(_Reason, _State) ->
-    ok.
+  ok.
 
 %%--------------------------------------------------------------------
 %% Func: code_change(OldVsn, State, Extra) -> {ok, NewState}
 %% Description: Convert process state when code is changed
 %%--------------------------------------------------------------------
 code_change(_OldVsn, State, _Extra) ->
-    {ok, State}.
+  {ok, State}.
 
 %%--------------------------------------------------------------------
 %%% Internal functions
