@@ -19,7 +19,7 @@ handle_request(GameName, []) ->
     player_one -> view_data(Game, PlayerOne, PlayerTwo);
     player_two -> view_data(Game, PlayerTwo, PlayerOne);
     undefined ->
-      beepbeep_args:set_session_data(GameName, player_one, Env),
+      beepbeep_args:set_session_data(AtomicGameName, player_two, Env),
       view_data(Game, PlayerTwo, PlayerOne)
   end,
   chat_server:subscribe(beepbeep_args:get_session_data(AtomicGameName, Env), Game#game.chat_server),
