@@ -30,6 +30,12 @@ handle_request(GameName, ["library_draw"]) ->
   {library_draw, _} = gen_server:call(AtomicGameName, {library_draw, PlayerNumber}),
   {redirect, lists:concat(["/game/", GameName])};
 
+handle_request(GameName, ["discard_draw"]) ->
+  AtomicGameName    = list_to_atom(GameName),
+  PlayerNumber      = beepbeep_args:get_session_data(AtomicGameName, Env),
+  {discard_draw, _} = gen_server:call(AtomicGameName, {discard_draw, PlayerNumber}),
+  {redirect, lists:concat(["/game/", GameName])};
+
 handle_request(GameName, ["discard", CardName]) ->
   AtomicGameName    = list_to_atom(GameName),
   PlayerNumber      = beepbeep_args:get_session_data(AtomicGameName, Env),

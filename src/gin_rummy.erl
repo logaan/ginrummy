@@ -1,7 +1,7 @@
 -module(gin_rummy).
 -include_lib("stdlib/include/qlc.hrl").
 -include("records.hrl").
--export([start_game/2, new_deck/0, library_draw/2, discard/3]).
+-export([start_game/2, new_deck/0, library_draw/2, discard_draw/2, discard/3]).
 
 start_game(Player1Name, Player2Name) ->
   Deck1 = new_deck(),
@@ -45,6 +45,15 @@ library_draw(player_two, Game = #game{player2=PlayerTwo, deck=Deck}) ->
   {NewHand, NewDeck} = move(PlayerTwo#player.hand, Deck),
   NewPlayerTwo = PlayerTwo#player{hand=NewHand},
   Game#game{player2=NewPlayerTwo, deck=NewDeck}.
+
+discard_draw(player_one, Game = #game{player1=PlayerOne, discard=Discard}) ->
+  {NewHand, NewDiscard} = move(PlayerOne#player.hand, Discard),
+  NewPlayerOne = PlayerOne#player{hand=NewHand},
+  Game#game{player1=NewPlayerOne, discard=NewDiscard};
+discard_draw(player_two, Game = #game{player2=PlayerTwo, discard=Discard}) ->
+  {NewHand, NewDiscard} = move(PlayerTwo#player.hand, Discard),
+  NewPlayerTwo = PlayerTwo#player{hand=NewHand},
+  Game#game{player2=NewPlayerTwo, discard=NewDiscard}.
 
 discard(player_one, CardName, Game = #game{player1=PlayerOne, discard=Discard}) ->
   {value, Card, NewHand} = lists:keytake(CardName, 2, PlayerOne#player.hand),

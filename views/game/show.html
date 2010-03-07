@@ -19,7 +19,7 @@
   <dt>Discard pile</dt>
   <dd>
   {% if top_of_discard %}
-    <a href="#">{{ top_of_discard }}</a>
+    <a href="/game/{{ game_name }}/discard_draw">{{ top_of_discard }}</a>
   {% else %}
     Empty
   {% endif %}
