@@ -44,7 +44,9 @@ handle_request(GameName, ["discard", CardName]) ->
 
 handle_request(_GameName, ["comet.json"]) ->
   timer:sleep(10000),
-  {render, "game/comet.html", []}.
+  {render, "game/comet.html", [
+      {process_id, io_lib:print(self())}
+    ]}.
 
 view_data(Game, CurrentPlayer, Opponent) ->
   [
