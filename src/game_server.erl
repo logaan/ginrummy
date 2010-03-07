@@ -21,6 +21,10 @@ handle_call({library_draw, Player}, _From, State) ->
   NewState = gin_rummy:library_draw(Player, State),
   {reply, {library_draw, NewState}, NewState};
 
+handle_call({discard, Player, CardName}, _From, State) ->
+  NewState = gin_rummy:discard(Player, CardName, State),
+  {reply, {discard, NewState}, NewState};
+
 handle_call(game_state, _From, State) ->
   {reply, {game_state, State}, State}.
 

@@ -7,7 +7,7 @@
 {% if your_hand %}
 <ul>
 {% for card in your_hand %}
-  <li><a href="#">{{ card }}</a></li>
+  <li><a href="/game/{{ game_name }}/discard/{{ card }}">{{ card }}</a></li>
 {% endfor %}
 </ul>
 {% else %}
