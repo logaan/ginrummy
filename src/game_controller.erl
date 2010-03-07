@@ -6,7 +6,9 @@ handle_request("start",[]) ->
   PlayerOneName = beepbeep_args:get_param("player_one_name",Env),
   PlayerTwoName = beepbeep_args:get_param("player_two_name",Env),
   {AtomicGameName, _} = game_server:start(PlayerOneName, PlayerTwoName),
+  {game_state, Game} = gen_server:call(AtomicGameName, game_state),
   beepbeep_args:set_session_data(AtomicGameName, player_one, Env),
+  chat_server:subscribe(player_one, Game#game.chat_server),
   {redirect, lists:concat(["/game/", AtomicGameName])};
 
 handle_request(GameName, []) ->
@@ -20,9 +22,9 @@ handle_request(GameName, []) ->
     player_two -> view_data(Game, PlayerTwo, PlayerOne);
     undefined ->
       beepbeep_args:set_session_data(AtomicGameName, player_two, Env),
+      chat_server:subscribe(player_two, Game#game.chat_server),
       view_data(Game, PlayerTwo, PlayerOne)
   end,
-  chat_server:subscribe(beepbeep_args:get_session_data(AtomicGameName, Env), Game#game.chat_server),
   {render, "game/show.html", ViewData};
 
 handle_request(GameName, ["library_draw"]) ->
