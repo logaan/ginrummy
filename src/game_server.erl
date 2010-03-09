@@ -5,7 +5,7 @@
 -include("records.hrl").
 
 init([Player1Name, Player2Name]) ->
-  {ok, gin_rummy:start_game(Player1Name, Player2Name)}.
+  {ok, game:start_game(Player1Name, Player2Name)}.
 
 handle_cast(_Msg, State) -> {noreply, State}.
 
@@ -19,16 +19,16 @@ handle_call(stop, _From, State) ->
   {stop, normal, State };
 
 handle_call({library_draw, Player}, _From, State) ->
-  NewState = gin_rummy:library_draw(Player, State),
+  NewState = game:library_draw(Player, State),
   chat_server:broadcast("Someone drew a card", State#game.chat_server),
   {reply, {library_draw, NewState}, NewState};
 
 handle_call({discard_draw, Player}, _From, State) ->
-  NewState = gin_rummy:discard_draw(Player, State),
+  NewState = game:discard_draw(Player, State),
   {reply, {discard_draw, NewState}, NewState};
 
 handle_call({discard, Player, CardName}, _From, State) ->
-  NewState = gin_rummy:discard(Player, CardName, State),
+  NewState = game:discard(Player, CardName, State),
   {reply, {discard, NewState}, NewState};
 
 handle_call(game_state, _From, State) ->
