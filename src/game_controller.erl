@@ -18,12 +18,12 @@ handle_request(GameName, []) ->
   PlayerTwo          = Game#game.player2,
 
   ViewData = case beepbeep_args:get_session_data(AtomicGameName, Env) of
-    player_one -> view_data(Game, PlayerOne, PlayerTwo);
-    player_two -> view_data(Game, PlayerTwo, PlayerOne);
+    player_one -> html_view_data(Game, PlayerOne, PlayerTwo);
+    player_two -> html_view_data(Game, PlayerTwo, PlayerOne);
     undefined ->
       beepbeep_args:set_session_data(AtomicGameName, player_two, Env),
       chat_server:subscribe(player_two, Game#game.chat_server),
-      view_data(Game, PlayerTwo, PlayerOne)
+      html_view_data(Game, PlayerTwo, PlayerOne)
   end,
   {render, "game/show.html", ViewData};
 
@@ -52,16 +52,12 @@ handle_request(GameName, ["comet"]) ->
   chat_server:listen(PlayerNumber, self(), Game#game.chat_server),
   receive
     {chat_messages, PlayerNumber, Messages} ->
-      {render, "game/comet.html", [
-        {process_id, io_lib:print(self())},
-        {messages, io_lib:print(Messages)}
-      ]}
+      {render, "game/comet.html", json_view_data(Game, PlayerNumber, Messages)}
   end.
 
-view_data(Game, CurrentPlayer, Opponent) ->
+html_view_data(Game, CurrentPlayer, Opponent) ->
   [
     {game_name,       beepbeep_args:get_action(Env)},
-    {game,            io_lib:print(Game)},
     {player_one_name, CurrentPlayer#player.name},
     {player_two_name, Opponent#player.name},
     {card_count,      length(CurrentPlayer#player.hand)},
@@ -69,6 +65,21 @@ view_data(Game, CurrentPlayer, Opponent) ->
     {top_of_discard,  top_of_discard(Game#game.discard)},
     {deck_size,       length(Game#game.deck)},
     {opponent_size,   length(Opponent#player.hand)}
+  ].
+
+json_view_data(Game = #game{ player1=PlayerOne, player2=PlayerTwo }, PlayerNumber, Messages) ->
+  case PlayerNumber of
+    player_one -> Player = PlayerOne, Opponent = PlayerTwo;
+    player_two -> Player = PlayerTwo, Opponent = PlayerOne
+  end,
+
+  [
+    {player_size,     length(Player#player.hand)},
+    {player_hand,     card_list(Player)},
+    {opponent_size,   length(Opponent#player.hand)},
+    {deck_size,       length(Game#game.deck)},
+    {top_of_discard,  top_of_discard(Game#game.discard)},
+    {new_messages,    Messages}
   ].
 
 card_list(Player) ->

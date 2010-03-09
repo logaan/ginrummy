@@ -1,4 +1,16 @@
 {
-"self":"{{ process_id }}",
-"messages":{{ messages }}
+ "player_size" : {{ player_size }},   
+ "player_hand" : [
+ {% for card in player_hand %}
+ "{{ card }}",
+ {% endfor %}
+ ],
+ "opponent_size" : {{ opponent_size }}, 
+ "deck_size" : {{ deck_size }},     
+ "top_of_discard" : "{{ top_of_discard }}",
+ "new_messages" : [
+ {% for message in new_messages %}
+ "{{ message }}",
+ {% endfor %}
+ ]
 }
