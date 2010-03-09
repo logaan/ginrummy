@@ -2,33 +2,42 @@
 -behaviour(gen_server).
 
 %% API
--export([start_link/0, state/1]).
+-export([start_link/0, state/0, new_id/0, stop/0]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
 	 terminate/2, code_change/3]).
 
-% Records
--record(state, {}).
-
 %%====================================================================
 %% API
 %%====================================================================
 start_link() ->
-  gen_server:start_link(?MODULE, [], []).
+  gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
-state(Pid) ->
-  gen_server:call(Pid, state).
+state() ->
+  gen_server:call(?MODULE, state).
+
+new_id() ->
+  gen_server:call(?MODULE, new_id).
+
+stop() ->
+  gen_server:call(?MODULE, stop).
 
 %%====================================================================
 %% gen_server callbacks
 %%====================================================================
 init([]) ->
-  {ok, #state{}}.
+  {ok, 0}.
 
+handle_call(new_id, _From, State) ->
+  NewId = State + 1,
+  Reply = {new_id, NewId},
+  {reply, Reply, NewId};
 handle_call(state, _From, State) ->
   Reply = State,
   {reply, Reply, State};
+handle_call(stop, _From, State) ->
+  {stop, normal, State };
 handle_call(_Request, _From, State) ->
   Reply = ok,
   {reply, Reply, State}.
