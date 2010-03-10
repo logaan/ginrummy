@@ -73,18 +73,22 @@ json_view_data(Game = #game{ player1=PlayerOne, player2=PlayerTwo }, PlayerNumbe
     player_two -> Player = PlayerTwo, Opponent = PlayerOne
   end,
 
-  [
-    {player_size,     length(Player#player.hand)},
-    {player_hand,     card_list(Player)},
-    {opponent_size,   length(Opponent#player.hand)},
-    {deck_size,       length(Game#game.deck)},
-    {top_of_discard,  top_of_discard(Game#game.discard)},
-    {new_messages,    Messages}
-  ].
+  FormattedMessages = lists:map(fun(M) -> list_to_binary(M) end, Messages),
+
+  Data = {struct, [
+    {"player_size",     length(Player#player.hand)},
+    {"player_hand",     card_list(Player)},
+    {"opponent_size",   length(Opponent#player.hand)},
+    {"deck_size",       length(Game#game.deck)},
+    {"top_of_discard",  list_to_binary(top_of_discard(Game#game.discard))},
+    {"new_messages",    FormattedMessages}
+  ]},
+
+  [ {json, iolist_to_binary(mochijson2:encode(Data))} ] .
 
 card_list(Player) ->
   Hand = Player#player.hand,
-  lists:map(fun(Card) -> Card#card.name end, Hand).
+  lists:map(fun(Card) -> list_to_binary(Card#card.name) end, Hand).
 
 top_of_discard([]) ->
   false;
