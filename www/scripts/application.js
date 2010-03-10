@@ -13,7 +13,7 @@ jQuery(function() {
   });
 
   $("#library").click(function() {
-    jQuery.get(game_path + "/library_draw");
+    jQuery.getJSON(game_path + "/library_draw");
     return false;
   });
 

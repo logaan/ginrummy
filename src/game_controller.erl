@@ -31,7 +31,10 @@ handle_request(GameName, ["library_draw"]) ->
   AtomicGameName    = list_to_atom(GameName),
   PlayerNumber      = beepbeep_args:get_session_data(AtomicGameName, Env),
   {library_draw, _} = gen_server:call(AtomicGameName, {library_draw, PlayerNumber}),
-  {redirect, lists:concat(["/game/", GameName])};
+  case is_ajax_request() of
+    true  -> {render, "game/library_draw.html", []};
+    false -> {redirect, lists:concat(["/game/", GameName])}
+  end;
 
 handle_request(GameName, ["discard_draw"]) ->
   AtomicGameName    = list_to_atom(GameName),
@@ -96,4 +99,10 @@ top_of_discard([]) ->
   false;
 top_of_discard([Head|_Tail]) ->
   Head#card.name.
+
+is_ajax_request() ->
+  AllHeaders = beepbeep_args:get_all_headers(Env),
+  AcceptString = proplists:get_value("HTTP_ACCEPT", AllHeaders),
+  AcceptList = string:tokens(AcceptString, ", "),
+  lists:member("application/json", AcceptList).
 
