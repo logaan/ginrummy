@@ -40,13 +40,19 @@ handle_request(GameName, ["discard_draw"]) ->
   AtomicGameName    = list_to_atom(GameName),
   PlayerNumber      = beepbeep_args:get_session_data(AtomicGameName, Env),
   {discard_draw, _} = gen_server:call(AtomicGameName, {discard_draw, PlayerNumber}),
-  {redirect, lists:concat(["/game/", GameName])};
+  case is_ajax_request() of
+    true  -> {render, "game/discard_draw.html", []};
+    false -> {redirect, lists:concat(["/game/", GameName])}
+  end;
 
 handle_request(GameName, ["discard", CardName]) ->
   AtomicGameName    = list_to_atom(GameName),
   PlayerNumber      = beepbeep_args:get_session_data(AtomicGameName, Env),
   {discard, _} = gen_server:call(AtomicGameName, {discard, PlayerNumber, CardName}),
-  {redirect, lists:concat(["/game/", GameName])};
+  case is_ajax_request() of
+    true  -> {render, "game/discard.html", []};
+    false -> {redirect, lists:concat(["/game/", GameName])}
+  end;
 
 handle_request(GameName, ["comet"]) ->
   AtomicGameName     = list_to_atom(GameName),

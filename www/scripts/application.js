@@ -3,12 +3,12 @@ jQuery(function() {
 
   $(".card").live("click", function() {
     var card_name = $(this).text();
-    jQuery.get(game_path + "/discard/" + card_name);
+    jQuery.getJSON(game_path + "/discard/" + card_name);
     return false;
   });
 
   $("#discard").click(function() {
-    jQuery.get(game_path + "/discard_draw");
+    jQuery.getJSON(game_path + "/discard_draw");
     return false;
   });
 
