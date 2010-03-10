@@ -64,6 +64,9 @@ function add_new_messages(new_messages) {
     var list_element = document.createElement("li");
     $(list_element).text(new_messages[i]);
     $("#chat_messages").append(list_element);
+
+    var chat_list = $("#chat ul");
+    chat_list.attr("scrollTop", chat_list.attr("scrollHeight"));
   };
 }
 

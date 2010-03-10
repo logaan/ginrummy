@@ -1,11 +1,13 @@
-body { 
-    background-color: #fff; color: #333;
-    font-family: verdana, arial, helvetica, sans-serif;
-    font-size:   13px;
-    margin-left: 50px;
-    margin-top: 50px;
-    margin-right: 200px;
-}
-label.verticle {
-  display: block;
-}
+body { background-color: #fff; color: #333; font-family: verdana, arial, helvetica, sans-serif; font-size:   13px; margin-left: 50px; margin-top: 50px; margin-right: 200px; }
+h1 { display: block; font-size: 2em; font-weight: bold; margin: 0.67em 0px 0.67em 0px; }
+h2 { display: block; font-size: 1.5em; font-weight: bold; margin: 0.83em 0px 0.83em 0px; }
+dd { margin: 0px 0px 0px 1em; }
+
+.verticle { display: block; }
+#main { position: relative; }
+#chat { position: absolute; right: 0px; top: 0px; width: 30em; height: 23em; border: 2px dashed #000; padding: 0.5em; }
+#chat ul { height: 18em; overflow-y: scroll; }
+#chat h2 { margin: 0px 0px 0.83em 0px; }
+#chat form { position: absolute; bottom: 0.5em; }
+#player_cards { display: block; list-style-type: disc; margin: 1em 0px 1em 0px; }
+#player_cards li { display: list-item; margin: 0px 0px 0px 1em; }

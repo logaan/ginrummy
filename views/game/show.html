@@ -11,40 +11,50 @@
   <code>http://localhost:8000/game/{{ game_name }}</code>
 </p>
 
-<h2>Your hand</h2>
-<p><span id="player_size">{{ card_count }}</span> cards</p>
-{% if your_hand %}
-<ul id="player_cards">
-{% for card in your_hand %}
-  <li><a href="/game/{{ game_name }}/discard/{{ card }}" class="card">{{ card }}</a></li>
-{% endfor %}
-</ul>
-{% else %}
-  Empty
-{% endif %}
+<div id="main">
 
-<h2>Game info</h2>
-<dl>
-  <dt>Discard pile</dt>
-  <dd>
-  {% if top_of_discard %}
-    <a href="/game/{{ game_name }}/discard_draw" id="discard">{{ top_of_discard }}</a>
+  <div id="chat">
+    <h2>Chat</h2>
+    <ul id="chat_messages"></ul>
+    <form action="#" method="post">
+      <input type="text" name="message" />
+      <input type="submit" value="Send" />
+    </form>
+  </div>
+
+  <h2>Game info</h2>
+  <dl>
+    <dt>Discard pile</dt>
+    <dd>
+    {% if top_of_discard %}
+      <a href="/game/{{ game_name }}/discard_draw" id="discard">{{ top_of_discard }}</a>
+    {% else %}
+      Empty
+    {% endif %}
+    </dd>
+
+    <dt>Library</dt>
+    <dd>
+      <a href="/game/{{ game_name }}/library_draw" id="library">
+        <span id="deck_size">{{ deck_size }}</span> cards
+      </a>
+    </dd>
+    <dt>{{ player_two_name }}'s hand</dt>
+    <dd><span id="opponent_size">{{ opponent_size }}</span> cards</dd>
+  </dl>
+
+  <h2>Your hand</h2>
+  <p><span id="player_size">{{ card_count }}</span> cards</p>
+  {% if your_hand %}
+  <ul id="player_cards">
+  {% for card in your_hand %}
+    <li><a href="/game/{{ game_name }}/discard/{{ card }}" class="card">{{ card }}</a></li>
+  {% endfor %}
+  </ul>
   {% else %}
     Empty
   {% endif %}
-  </dd>
 
-  <dt>Library</dt>
-  <dd>
-    <a href="/game/{{ game_name }}/library_draw" id="library">
-      <span id="deck_size">{{ deck_size }}</span> cards
-    </a>
-  </dd>
-  <dt>{{ player_two_name }}'s hand</dt>
-  <dd><span id="opponent_size">{{ opponent_size }}</span> cards</dd>
-</dl>
-
-<h2>Chat</h2>
-<ul id="chat_messages"></ul>
+</div>
 
 {% endblock %}
