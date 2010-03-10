@@ -38,6 +38,21 @@ jQuery(function() {
   }
 
   comet_request();
+
+  $("#player_cards").sortable({
+    update: function(event, ui) {
+      var card_names = jQuery.map($(".card"), function(card) {
+        return $(card).text();
+      });
+      
+      jQuery.post(
+        game_path + "/sort",
+        { card_names: card_names },
+        function() { console.log("sorted") },
+        "json"
+      );
+    }
+  });
 });
 
 function update_page(data) {
