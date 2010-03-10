@@ -64,6 +64,22 @@ handle_request(GameName, ["comet"]) ->
       chat_server:unlisten(PlayerNumber, self(), Game#game.chat_server),
       {game_state, NewGame} = gen_server:call(AtomicGameName, game_state),
       {render, "game/comet.html", json_view_data(NewGame, PlayerNumber, Messages)}
+  end;
+
+handle_request(GameName, ["broadcast"]) ->
+  AtomicGameName     = list_to_atom(GameName),
+  PlayerNumber       = beepbeep_args:get_session_data(AtomicGameName, Env),
+  {game_state, Game} = gen_server:call(AtomicGameName, game_state),
+  Message            = beepbeep_args:get_param("message", Env),
+  case PlayerNumber of
+    player_one -> Player = Game#game.player1;
+    player_two -> Player = Game#game.player2
+  end,
+  FormattedMessage = lists:concat([Player#player.name, " : ", Message]),
+  chat_server:broadcast(FormattedMessage, Game#game.chat_server),
+  case is_ajax_request() of
+    true  -> {render, "game/broadcast.html", []};
+    false -> {redirect, lists:concat(["/game/", GameName])}
   end.
 
 html_view_data(Game, CurrentPlayer, Opponent) ->

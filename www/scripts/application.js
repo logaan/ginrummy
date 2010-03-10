@@ -17,6 +17,19 @@ jQuery(function() {
     return false;
   });
 
+  $("#chat form").submit(function() {
+    jQuery.post(
+      game_path + "/broadcast",
+      { message: $("#message").val() },
+      function() { console.log("posted") },
+      "json"
+    );
+    $("#message").val("").focus();
+    return false;
+  });
+
+  $("#message").focus();
+
   function comet_request() {
     jQuery.getJSON(game_path + "/comet", {}, function(data){
       update_page(data);

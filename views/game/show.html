@@ -16,8 +16,8 @@
   <div id="chat">
     <h2>Chat</h2>
     <ul id="chat_messages"></ul>
-    <form action="#" method="post">
-      <input type="text" name="message" />
+    <form action="/game/{{ game_name }}/broadcast" method="post">
+      <input type="text" name="message" id="message" />
       <input type="submit" value="Send" />
     </form>
   </div>
