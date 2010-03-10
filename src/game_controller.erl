@@ -3,10 +3,10 @@
 -include("records.hrl").
 
 handle_request("start",[]) ->
-  PlayerOneName = beepbeep_args:get_param("player_one_name",Env),
-  PlayerTwoName = beepbeep_args:get_param("player_two_name",Env),
+  PlayerOneName       = beepbeep_args:get_param("player_one_name",Env),
+  PlayerTwoName       = beepbeep_args:get_param("player_two_name",Env),
   {AtomicGameName, _} = game_server:start(PlayerOneName, PlayerTwoName),
-  {game_state, Game} = gen_server:call(AtomicGameName, game_state),
+  {game_state, Game}  = gen_server:call(AtomicGameName, game_state),
   beepbeep_args:set_session_data(AtomicGameName, player_one, Env),
   chat_server:subscribe(player_one, Game#game.chat_server),
   {redirect, lists:concat(["/game/", AtomicGameName])};
@@ -101,8 +101,8 @@ top_of_discard([Head|_Tail]) ->
   Head#card.name.
 
 is_ajax_request() ->
-  AllHeaders = beepbeep_args:get_all_headers(Env),
+  AllHeaders   = beepbeep_args:get_all_headers(Env),
   AcceptString = proplists:get_value("HTTP_ACCEPT", AllHeaders),
-  AcceptList = string:tokens(AcceptString, ", "),
+  AcceptList   = string:tokens(AcceptString, ", "),
   lists:member("application/json", AcceptList).
 
