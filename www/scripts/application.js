@@ -1,7 +1,7 @@
 jQuery(function() {
   var game_path = window.location.pathname;
 
-  $(".card").click(function() {
+  $(".card").live("click", function() {
     var card_name = $(this).text();
     jQuery.get(game_path + "/discard/" + card_name);
     return false;
@@ -48,7 +48,7 @@ function update_card_list(cards) {
 
     var card = document.createElement("a");
     $(card).addClass("card");
-    $(card).attr("href", game_path + "discard" + card_name);
+    $(card).attr("href", game_path + "/discard/" + card_name);
     $(card).text(card_name);
 
     var list_element = document.createElement("li");
