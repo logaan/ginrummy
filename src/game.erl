@@ -18,12 +18,25 @@ new_deck() ->
 
 generate_playing_cards() ->
   Suites = ["Hearts", "Diamonds", "Spades", "Clubs"],
-  Values = ["King", "Queen", "Jack", "Ten", "Nine", "Eight", "Seven", "Six",
-    "Five", "Four", "Three", "Two", "Ace"],
+  Values = [
+    {"King",  13},
+    {"Queen", 12},
+    {"Jack",  11},
+    {"Ten",   10},
+    {"Nine",  9},
+    {"Eight", 8},
+    {"Seven", 7},
+    {"Six",   6},
+    {"Five",  5},
+    {"Four",  4},
+    {"Three", 3},
+    {"Two",   2},
+    {"Ace",   1}
+  ],
   [ #card{
-      name = string:join([V, "of", S], " "),
-      properties = [{suite, S}, {value, V}]
-    } || S <- Suites, V <- Values ].
+      name = string:join([ValName, "of", S], " "),
+      properties = [{suite, S}, {value, Val}]
+    } || S <- Suites, {ValName, Val} <- Values ].
 
 shuffle_deck(Deck) ->
   shuffle_deck([], Deck).
@@ -77,7 +90,7 @@ move(NumberOfCards, ToDeck, FromDeck) ->
 
 sort_hands(Game = #game{ player1=PlayerOne, player2=PlayerTwo }) ->
   CardCompare = fun(#card{properties=Prop1}, #card{properties=Prop2}) ->
-    proplists:get_value(suite, Prop1) > proplists:get_value(suite, Prop2)
+    proplists:get_value(value, Prop1) > proplists:get_value(value, Prop2)
   end,
   Player1Hand = PlayerOne#player.hand,
   Player2Hand = PlayerTwo#player.hand,
