@@ -3,7 +3,7 @@
 -include("records.hrl").
 
 %% API
--export([start/2, library_draw/2, discard_draw/2, discard/3, stop/0]).
+-export([start/2, library_draw/2, discard_draw/2, discard/3, game_state/1, stop/0]).
 
 %% gen-server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
@@ -22,6 +22,8 @@ discard_draw(Game, Player) ->
   gen_server:call(Game, {discard_draw, Player}).
 discard(Game, Player, CardName) ->
   gen_server:call(Game, {discard, Player, CardName}).
+game_state(Game) ->
+  gen_server:call(Game, game_state).
 stop() ->
   gen_server:call(?MODULE, stop).
 

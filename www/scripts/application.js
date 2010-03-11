@@ -38,21 +38,6 @@ jQuery(function() {
   }
 
   comet_request();
-
-  $("#player_cards").sortable({
-    update: function(event, ui) {
-      var card_names = jQuery.map($(".card"), function(card) {
-        return $(card).text();
-      });
-      
-      jQuery.post(
-        game_path + "/sort",
-        { card_names: card_names },
-        function() { console.log("sorted") },
-        "json"
-      );
-    }
-  });
 });
 
 function update_page(data) {
@@ -60,9 +45,15 @@ function update_page(data) {
   $("#deck_size").text(data.deck_size);
   $("#opponent_size").text(data.opponent_size);
   $("#player_size").text(data.player_size);
-  $("#discard").text(data.top_of_discard);
+  if (data.top_of_discard == "") {
+    $("#discard").text("Empty")
+  } else {
+    $("#discard").text(data.top_of_discard);
+  }
   update_card_list(data.player_hand);
   add_new_messages(data.new_messages);
+
+  $("#player_cards").sortable();
 };
 
 function update_card_list(cards) {

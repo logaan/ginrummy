@@ -118,7 +118,7 @@ card_list(Player) ->
   lists:map(fun(Card) -> list_to_binary(Card#card.name) end, Hand).
 
 top_of_discard([]) ->
-  false;
+  "";
 top_of_discard([Head|_Tail]) ->
   Head#card.name.
 
