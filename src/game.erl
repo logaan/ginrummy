@@ -48,7 +48,7 @@ shuffle_deck(Deck, OldDeck) ->
   shuffle_deck(NewDeck, NewOldDeck).
 
 random_draw(Deck) ->
-  Card = lists:nth(random:uniform(length(Deck)), Deck),
+  Card = lists:nth(crypto:rand_uniform(1, length(Deck) + 1), Deck),
   NewDeck = lists:delete(Card, Deck),
   {Card, NewDeck}.
 
