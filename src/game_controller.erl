@@ -23,6 +23,8 @@ handle_request(GameName, []) ->
     undefined ->
       beepbeep_args:set_session_data(AtomicGameName, player_two, Env),
       chat_server:subscribe(player_two, Game#game.chat_server),
+      Message = lists:concat([PlayerTwo#player.name, " joined the game"]),
+      chat_server:broadcast(Message, Game#game.chat_server),
       html_view_data(Game, PlayerTwo, PlayerOne)
   end,
   {render, "game/show.html", ViewData};

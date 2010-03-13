@@ -52,8 +52,6 @@ function update_page(data) {
   }
   update_card_list(data.player_hand);
   add_new_messages(data.new_messages);
-
-  $("#player_cards").sortable();
 };
 
 function update_card_list(cards) {
