@@ -163,10 +163,11 @@ test() ->
   chat_server:listen(logan, Printer, Pid),
   chat_server:listen(lyndon, Printer, Pid),
   timer:sleep(100),
-  chat_server:state(Pid).
+  chat_server:state(Pid),
+  ok.
 
 print_messages() ->
   receive
-    Message -> io:format("~p~n", [Message])
+    _Message -> ok
   end,
   print_messages().
