@@ -7,22 +7,21 @@ handle_request("start",[]) ->
   PlayerTwoName       = beepbeep_args:get_param("player_two_name",Env),
   {AtomicGameName, _} = game_server:start(PlayerOneName, PlayerTwoName),
   {game_state, Game}  = gen_server:call(AtomicGameName, game_state),
-  beepbeep_args:set_session_data(AtomicGameName, player_one, Env),
-  chat_server:subscribe(player_one, Game#game.chat_server),
+  beepbeep_args:set_session_data(AtomicGameName, 1, Env),
+  chat_server:subscribe(1, Game#game.chat_server),
   {redirect, lists:concat(["/game/", AtomicGameName])};
 
 handle_request(GameName, []) ->
-  AtomicGameName     = list_to_atom(GameName),
-  {game_state, Game} = gen_server:call(AtomicGameName, game_state),
-  PlayerOne          = Game#game.player1,
-  PlayerTwo          = Game#game.player2,
+  AtomicGameName         = list_to_atom(GameName),
+  {game_state, Game}     = gen_server:call(AtomicGameName, game_state),
+  [PlayerOne, PlayerTwo] = Game#game.players,
 
   ViewData = case beepbeep_args:get_session_data(AtomicGameName, Env) of
-    player_one -> html_view_data(Game, PlayerOne, PlayerTwo);
-    player_two -> html_view_data(Game, PlayerTwo, PlayerOne);
+    1 -> html_view_data(Game, PlayerOne, PlayerTwo);
+    2 -> html_view_data(Game, PlayerTwo, PlayerOne);
     undefined ->
-      beepbeep_args:set_session_data(AtomicGameName, player_two, Env),
-      chat_server:subscribe(player_two, Game#game.chat_server),
+      beepbeep_args:set_session_data(AtomicGameName, 2, Env),
+      chat_server:subscribe(2, Game#game.chat_server),
       Message = lists:concat([PlayerTwo#player.name, " joined the game"]),
       chat_server:broadcast(Message, Game#game.chat_server),
       html_view_data(Game, PlayerTwo, PlayerOne)
@@ -73,10 +72,7 @@ handle_request(GameName, ["broadcast"]) ->
   PlayerNumber       = beepbeep_args:get_session_data(AtomicGameName, Env),
   {game_state, Game} = gen_server:call(AtomicGameName, game_state),
   Message            = beepbeep_args:get_param("message", Env),
-  case PlayerNumber of
-    player_one -> Player = Game#game.player1;
-    player_two -> Player = Game#game.player2
-  end,
+  Player             = lists:nth(PlayerNumber, Game#game.players),
   FormattedMessage = lists:concat([Player#player.name, " : ", Message]),
   chat_server:broadcast(FormattedMessage, Game#game.chat_server),
   case is_ajax_request() of
@@ -96,10 +92,10 @@ html_view_data(Game, CurrentPlayer, Opponent) ->
     {opponent_size,   length(Opponent#player.hand)}
   ].
 
-json_view_data(Game = #game{ player1=PlayerOne, player2=PlayerTwo }, PlayerNumber, Messages) ->
+json_view_data(Game = #game{ players=[PlayerOne, PlayerTwo] }, PlayerNumber, Messages) ->
   case PlayerNumber of
-    player_one -> Player = PlayerOne, Opponent = PlayerTwo;
-    player_two -> Player = PlayerTwo, Opponent = PlayerOne
+    1 -> Player = PlayerOne, Opponent = PlayerTwo;
+    2 -> Player = PlayerTwo, Opponent = PlayerOne
   end,
 
   FormattedMessages = lists:map(fun(M) -> list_to_binary(M) end, Messages),

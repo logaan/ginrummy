@@ -67,9 +67,8 @@ handle_call(game_state, _From, State) ->
 %%====================================================================
 %%% Internal functions
 %%====================================================================
-player_name(#game{ player1=Player }, player_one) ->
-  Player#player.name;
-player_name(#game{ player2=Player }, player_two) ->
+player_name(#game{ players=Players }, Number) ->
+  Player = lists:nth(Number, Players),
   Player#player.name.
 
 %%====================================================================
