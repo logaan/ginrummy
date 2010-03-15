@@ -58,25 +58,18 @@ library_draw(Number, Game = #game{players=Players, deck=Deck}) ->
   NewPlayer = Player#player{hand=NewHand},
   sort_hands(replace_player(Number, NewPlayer, Game#game{deck=NewDeck})).
 
-discard_draw(player_one, Game = #game{player1=PlayerOne, discard=Discard}) ->
-  {NewHand, NewDiscard} = move(PlayerOne#player.hand, Discard),
-  NewPlayerOne = PlayerOne#player{hand=NewHand},
-  sort_hands(Game#game{player1=NewPlayerOne, discard=NewDiscard});
-discard_draw(player_two, Game = #game{player2=PlayerTwo, discard=Discard}) ->
-  {NewHand, NewDiscard} = move(PlayerTwo#player.hand, Discard),
-  NewPlayerTwo = PlayerTwo#player{hand=NewHand},
-  sort_hands(Game#game{player2=NewPlayerTwo, discard=NewDiscard}).
+discard_draw(Number, Game = #game{players=Players, discard=Discard}) ->
+  Player = lists:nth(Number, Players),
+  {NewHand, NewDiscard} = move(Player#player.hand, Discard),
+  NewPlayer = Player#player{hand=NewHand},
+  sort_hands(replace_player(Number, NewPlayer, Game#game{discard=NewDiscard})).
 
-discard(player_one, CardName, Game = #game{player1=PlayerOne, discard=Discard}) ->
-  {value, Card, NewHand} = lists:keytake(CardName, 2, PlayerOne#player.hand),
+discard(Number, CardName, Game = #game{players=Players, discard=Discard}) ->
+  Player = lists:nth(Number, Players),
+  {value, Card, NewHand} = lists:keytake(CardName, 2, Player#player.hand),
   NewDiscard = [Card|Discard],
-  NewPlayerOne = PlayerOne#player{hand=NewHand},
-  sort_hands(Game#game{player1=NewPlayerOne, discard=NewDiscard});
-discard(player_two, CardName, Game = #game{player2=PlayerTwo, discard=Discard}) ->
-  {value, Card, NewHand} = lists:keytake(CardName, 2, PlayerTwo#player.hand),
-  NewDiscard = [Card|Discard],
-  NewPlayerTwo = PlayerTwo#player{hand=NewHand},
-  sort_hands(Game#game{player2=NewPlayerTwo, discard=NewDiscard}).
+  NewPlayer = Player#player{hand=NewHand},
+  sort_hands(replace_player(Number, NewPlayer, Game#game{discard=NewDiscard})).
 
 move(ToDeck, [Card | FromDeck ]) ->
   {[Card | ToDeck], FromDeck}.
@@ -107,9 +100,25 @@ replace_player(Number, Player, Game = #game{ players=Players }) ->
 
 test() ->
   test_library_draw(),
+  test_discard_draw(),
+  test_discard(),
   ok.
 
 test_library_draw() ->
   Game = start_game("foo", "bar"),
-  #game{players=[P1|_]} = game:library_draw(1, Game),
-  length(P1#player.hand) == 11.
+  #game{players=[P1|_], deck=Deck} = game:library_draw(1, Game),
+  11 = length(P1#player.hand),
+  30 = length(Deck).
+
+test_discard_draw() ->
+  Game = start_game("foo", "bar"),
+  #game{players=[P1|_], discard=Discard} = game:discard_draw(1, Game),
+  11 = length(P1#player.hand),
+  0 = length(Discard).
+
+test_discard() ->
+  Game = #game{players=[OP1|_]} = start_game("foo", "bar"),
+  [#card{name=CardName}|_] = OP1#player.hand,
+  #game{players=[P1|_], discard=Discard} = game:discard(1, CardName, Game),
+  9 = length(P1#player.hand),
+  2 = length(Discard).
