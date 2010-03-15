@@ -80,19 +80,23 @@ handle_request(GameName, ["broadcast"]) ->
     false -> {redirect, lists:concat(["/game/", GameName])}
   end.
 
-html_view_data(Game, CurrentPlayer, Opponent) ->
+html_view_data(#game{zones=Zones}, CurrentPlayer, Opponent) ->
+  Deck    = proplists:get_value(deck, Zones),
+  Discard = proplists:get_value(discard, Zones),
   [
     {game_name,       beepbeep_args:get_action(Env)},
     {player_one_name, CurrentPlayer#player.name},
     {player_two_name, Opponent#player.name},
     {card_count,      length(CurrentPlayer#player.hand)},
     {your_hand,       card_list(CurrentPlayer)},
-    {top_of_discard,  top_of_discard(Game#game.discard)},
-    {deck_size,       length(Game#game.deck)},
+    {top_of_discard,  top_of_discard(Discard)},
+    {deck_size,       length(Deck)},
     {opponent_size,   length(Opponent#player.hand)}
   ].
 
-json_view_data(Game = #game{ players=[PlayerOne, PlayerTwo] }, PlayerNumber, Messages) ->
+json_view_data(#game{ players=[PlayerOne, PlayerTwo], zones=Zones }, PlayerNumber, Messages) ->
+  Deck    = proplists:get_value(deck, Zones),
+  Discard = proplists:get_value(discard, Zones),
   case PlayerNumber of
     1 -> Player = PlayerOne, Opponent = PlayerTwo;
     2 -> Player = PlayerTwo, Opponent = PlayerOne
@@ -104,8 +108,8 @@ json_view_data(Game = #game{ players=[PlayerOne, PlayerTwo] }, PlayerNumber, Mes
     {"player_size",     length(Player#player.hand)},
     {"player_hand",     card_list(Player)},
     {"opponent_size",   length(Opponent#player.hand)},
-    {"deck_size",       length(Game#game.deck)},
-    {"top_of_discard",  list_to_binary(top_of_discard(Game#game.discard))},
+    {"deck_size",       length(Deck)},
+    {"top_of_discard",  list_to_binary(top_of_discard(Discard))},
     {"new_messages",    FormattedMessages}
   ]},
 

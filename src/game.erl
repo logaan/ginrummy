@@ -8,10 +8,11 @@ start_game(Player1Name, Player2Name) ->
   {Player1Hand, Deck2} = move(10, [], Deck1),
   {Player2Hand, Deck3} = move(10, [], Deck2),
   {Discard,     Deck4} = move([], Deck3),
+  Zones = [{discard, Discard}, {deck, Deck4}],
   Player1 = #player{ name = Player1Name, hand = Player1Hand },
   Player2 = #player{ name = Player2Name, hand = Player2Hand },
-  {ok, Pid} = chat_server:start_link(),
-  sort_hands(#game{ players=[Player1, Player2], deck=Deck4, discard=Discard, chat_server=Pid }).
+  {ok, ChatServer} = chat_server:start_link(),
+  sort_hands(#game{ players=[Player1, Player2], zones=Zones, chat_server=ChatServer }).
 
 new_deck() ->
   shuffle_deck(generate_playing_cards()).
@@ -52,24 +53,40 @@ random_draw(Deck) ->
   NewDeck = lists:delete(Card, Deck),
   {Card, NewDeck}.
 
-library_draw(Number, Game = #game{players=Players, deck=Deck}) ->
+library_draw(Number, Game = #game{players=Players, zones=Zones}) ->
+  % Decompose
   Player = lists:nth(Number, Players),
+  Deck   = proplists:get_value(deck, Zones),
+  % Do stuff
   {NewHand, NewDeck} = move(Player#player.hand, Deck),
+  % Recompose
   NewPlayer = Player#player{hand=NewHand},
-  sort_hands(replace_player(Number, NewPlayer, Game#game{deck=NewDeck})).
+  NewGame   = Game#game{zones=replace_property({deck, NewDeck}, Zones)},
+  sort_hands(replace_player(Number, NewPlayer, NewGame)).
 
-discard_draw(Number, Game = #game{players=Players, discard=Discard}) ->
-  Player = lists:nth(Number, Players),
+discard_draw(Number, Game = #game{players=Players, zones=Zones}) ->
+  % Decompose
+  Player    = lists:nth(Number, Players),
+  Discard   = proplists:get_value(discard, Zones),
+  % Do stuff
   {NewHand, NewDiscard} = move(Player#player.hand, Discard),
+  % Recompose
   NewPlayer = Player#player{hand=NewHand},
-  sort_hands(replace_player(Number, NewPlayer, Game#game{discard=NewDiscard})).
+  NewGame   = Game#game{zones=replace_property({discard, NewDiscard}, Zones)},
+  sort_hands(replace_player(Number, NewPlayer, NewGame)).
 
-discard(Number, CardName, Game = #game{players=Players, discard=Discard}) ->
-  Player = lists:nth(Number, Players),
+discard(Number, CardName, Game = #game{players=Players, zones=Zones}) ->
+  % Decompose
+  Player     = lists:nth(Number, Players),
+  Discard    = proplists:get_value(discard, Zones),
+  % Do stuff
   {value, Card, NewHand} = lists:keytake(CardName, 2, Player#player.hand),
+  % Recompose
   NewDiscard = [Card|Discard],
-  NewPlayer = Player#player{hand=NewHand},
-  sort_hands(replace_player(Number, NewPlayer, Game#game{discard=NewDiscard})).
+  NewPlayer  = Player#player{hand=NewHand},
+  NewGame   = Game#game{zones=replace_property({discard, NewDiscard}, Zones)},
+  % Spew forth mildy different data unto the world
+  sort_hands(replace_player(Number, NewPlayer, NewGame)).
 
 move(ToDeck, [Card | FromDeck ]) ->
   {[Card | ToDeck], FromDeck}.
@@ -98,6 +115,9 @@ replace_player(Number, Player, Game = #game{ players=Players }) ->
   NewPlayers = lists:append([Head, [Player], Tail]),
   Game#game{ players=NewPlayers }.
 
+replace_property(NewProp={Key, _Value}, Proplist) ->
+  [NewProp | proplists:delete(Key, Proplist)].
+
 test() ->
   test_library_draw(),
   test_discard_draw(),
@@ -106,19 +126,22 @@ test() ->
 
 test_library_draw() ->
   Game = start_game("foo", "bar"),
-  #game{players=[P1|_], deck=Deck} = game:library_draw(1, Game),
+  #game{players=[P1|_], zones=Zones} = game:library_draw(1, Game),
+  Deck = proplists:get_value(deck, Zones),
   11 = length(P1#player.hand),
   30 = length(Deck).
 
 test_discard_draw() ->
   Game = start_game("foo", "bar"),
-  #game{players=[P1|_], discard=Discard} = game:discard_draw(1, Game),
+  #game{players=[P1|_], zones=Zones} = game:discard_draw(1, Game),
+  Discard = proplists:get_value(discard, Zones),
   11 = length(P1#player.hand),
   0 = length(Discard).
 
 test_discard() ->
   Game = #game{players=[OP1|_]} = start_game("foo", "bar"),
   [#card{name=CardName}|_] = OP1#player.hand,
-  #game{players=[P1|_], discard=Discard} = game:discard(1, CardName, Game),
+  #game{players=[P1|_], zones=Zones} = game:discard(1, CardName, Game),
+  Discard = proplists:get_value(discard, Zones),
   9 = length(P1#player.hand),
   2 = length(Discard).
