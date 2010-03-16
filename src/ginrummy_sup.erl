@@ -54,6 +54,9 @@ init([]) ->
     SessionServer = {beepbeep_session_server,
 		     {beepbeep_session_server,start,[]},
 		     permanent, 5000, worker, dynamic},
+    IdServer = {id_server,
+                {id_server,start,[]},
+                permanent, 5000, worker, dynamic},
     
-    Processes = [Router,SessionServer,Web],
+    Processes = [Router,SessionServer,Web,IdServer],
     {ok, {{one_for_one, 10, 10}, Processes}}.
