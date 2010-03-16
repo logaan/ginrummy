@@ -43,7 +43,7 @@ jQuery(function() {
 
   $(document).keypress(function(e) {
     if( $(e.currentTarget.activeElement).attr("nodeName") != "INPUT" ) {
-      switch( e.charCode ) {
+      switch( e.which ) {
         case 0: // escape
           key_multiplier = 0;
           e.preventDefault();
@@ -60,10 +60,10 @@ jQuery(function() {
           break;
 
         default: 
-          if( e.charCode >= 48 && e.charCode <= 57 ) { // 0 to 9
+          if( e.which >= 48 && e.which <= 57 ) { // 0 to 9
             // Add the number onto the multiplier. So if you hit
             // 1 then 0 then 8 the multiplier would be 108.
-            key_multiplier = key_multiplier * 10 + e.charCode - 48;
+            key_multiplier = key_multiplier * 10 + e.which - 48;
           };
       }
     }
