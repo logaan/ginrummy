@@ -53,27 +53,22 @@ random_draw(Deck) ->
   NewDeck = lists:delete(Card, Deck),
   {Card, NewDeck}.
 
-library_draw(Number, Game = #game{players=Players, zones=Zones}) ->
-  % Decompose
-  Player = lists:nth(Number, Players),
-  Deck   = proplists:get_value(deck, Zones),
-  % Do stuff
-  {NewHand, NewDeck} = move(Player#player.hand, Deck),
-  % Recompose
-  NewPlayer = Player#player{hand=NewHand},
-  NewGame   = Game#game{zones=replace_property({deck, NewDeck}, Zones)},
-  sort_hands(replace_player(Number, NewPlayer, NewGame)).
+library_draw(Number, Game) ->
+  draw(deck, Number, Game).
 
-discard_draw(Number, Game = #game{players=Players, zones=Zones}) ->
+discard_draw(Number, Game) ->
+  draw(discard, Number, Game).
+
+draw(ZoneName, PlayerNumber, Game = #game{players=Players, zones=Zones}) ->
   % Decompose
-  Player    = lists:nth(Number, Players),
-  Discard   = proplists:get_value(discard, Zones),
+  Player = lists:nth(PlayerNumber, Players),
+  Zone   = proplists:get_value(ZoneName, Zones),
   % Do stuff
-  {NewHand, NewDiscard} = move(Player#player.hand, Discard),
+  {NewHand, NewZone} = move(Player#player.hand, Zone),
   % Recompose
   NewPlayer = Player#player{hand=NewHand},
-  NewGame   = Game#game{zones=replace_property({discard, NewDiscard}, Zones)},
-  sort_hands(replace_player(Number, NewPlayer, NewGame)).
+  NewGame   = Game#game{zones=replace_property({ZoneName, NewZone}, Zones)},
+  sort_hands(replace_player(PlayerNumber, NewPlayer, NewGame)).
 
 discard(Number, CardName, Game = #game{players=Players, zones=Zones}) ->
   % Decompose
