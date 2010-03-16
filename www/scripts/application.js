@@ -21,14 +21,29 @@ jQuery(function() {
     jQuery.post(
       game_path + "/broadcast",
       { message: $("#message").val() },
-      function() { console.log("posted") },
+      function() {  },
       "json"
     );
     $("#message").val("").focus();
     return false;
   });
 
-  $("#message").focus();
+  $(document).keypress(function(e) {
+    if( $(e.currentTarget.activeElement).attr("nodeName") != "INPUT" ) {
+      switch( e.charCode ) {
+        case 108: //lower case l
+          jQuery.getJSON(game_path + "/library_draw");
+          e.preventDefault();
+          break;
+        case 100: //lower case d
+          jQuery.getJSON(game_path + "/discard_draw");
+          e.preventDefault();
+          break;
+        default: 
+          console.log(e.charCode);
+      }
+    }
+  });
 
   function comet_request() {
     jQuery.getJSON(game_path + "/comet", {}, function(data){

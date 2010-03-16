@@ -4,13 +4,9 @@
 -export([start_game/2, new_deck/0, library_draw/2, discard_draw/2, discard/3, test/0]).
 
 start_game(Player1Name, Player2Name) ->
-  Deck1 = new_deck(),
-  {Player1Hand, Deck2} = move(10, [], Deck1),
-  {Player2Hand, Deck3} = move(10, [], Deck2),
-  {Discard,     Deck4} = move([], Deck3),
-  Zones = [{discard, Discard}, {deck, Deck4}],
-  Player1 = #player{ name = Player1Name, hand = Player1Hand },
-  Player2 = #player{ name = Player2Name, hand = Player2Hand },
+  Zones = [{discard, []}, {deck, new_deck()}],
+  Player1 = #player{ name = Player1Name },
+  Player2 = #player{ name = Player2Name },
   {ok, ChatServer} = chat_server:start_link(),
   sort_hands(#game{ players=[Player1, Player2], zones=Zones, chat_server=ChatServer }).
 
@@ -80,10 +76,6 @@ hand_move(ZoneName, PlayerNumber, Strategy, Game = #game{players=Players, zones=
 
 move(ToDeck, [Card | FromDeck ]) ->
   {[Card | ToDeck], FromDeck}.
-move(NumberOfCards, ToDeck, FromDeck) ->
-  {Cards, NewFromDeck} = lists:split(NumberOfCards, FromDeck),
-  NewToDeck = lists:append([Cards, ToDeck]),
-  {NewToDeck, NewFromDeck}.
 
 sort_hands(Game = #game{ players=[PlayerOne, PlayerTwo] }) ->
   CardCompare = fun(#card{properties=Prop1}, #card{properties=Prop2}) ->
