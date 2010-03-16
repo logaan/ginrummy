@@ -54,34 +54,29 @@ random_draw(Deck) ->
   {Card, NewDeck}.
 
 library_draw(Number, Game) ->
-  draw(deck, Number, Game).
+  hand_move(deck, Number, fun move/2, Game).
 
 discard_draw(Number, Game) ->
-  draw(discard, Number, Game).
+  hand_move(discard, Number, fun move/2, Game).
 
-draw(ZoneName, PlayerNumber, Game = #game{players=Players, zones=Zones}) ->
+discard(Number, CardName, Game) ->
+  Strategy = fun(Hand, Discard) ->
+    {value, Card, NewHand} = lists:keytake(CardName, 2, Hand),
+    NewDiscard = [Card|Discard],
+    {NewHand, NewDiscard}
+  end,
+  hand_move(discard, Number, Strategy, Game).
+
+hand_move(ZoneName, PlayerNumber, Strategy, Game = #game{players=Players, zones=Zones}) ->
   % Decompose
   Player = lists:nth(PlayerNumber, Players),
   Zone   = proplists:get_value(ZoneName, Zones),
   % Do stuff
-  {NewHand, NewZone} = move(Player#player.hand, Zone),
+  {NewHand, NewZone} = Strategy(Player#player.hand, Zone),
   % Recompose
   NewPlayer = Player#player{hand=NewHand},
   NewGame   = Game#game{zones=replace_property({ZoneName, NewZone}, Zones)},
   sort_hands(replace_player(PlayerNumber, NewPlayer, NewGame)).
-
-discard(Number, CardName, Game = #game{players=Players, zones=Zones}) ->
-  % Decompose
-  Player     = lists:nth(Number, Players),
-  Discard    = proplists:get_value(discard, Zones),
-  % Do stuff
-  {value, Card, NewHand} = lists:keytake(CardName, 2, Player#player.hand),
-  % Recompose
-  NewDiscard = [Card|Discard],
-  NewPlayer  = Player#player{hand=NewHand},
-  NewGame   = Game#game{zones=replace_property({discard, NewDiscard}, Zones)},
-  % Spew forth mildy different data unto the world
-  sort_hands(replace_player(Number, NewPlayer, NewGame)).
 
 move(ToDeck, [Card | FromDeck ]) ->
   {[Card | ToDeck], FromDeck}.
