@@ -1,5 +1,24 @@
 jQuery(function() {
+  var key_multiplier = 0;
   var game_path = window.location.pathname;
+
+  function multiplier_times_do(func) {
+    func();
+    for(var i = 1; i < key_multiplier; i++) {
+      func();
+    }
+    key_multiplier = 0;
+  }
+
+  function discard_draw() {
+    jQuery.getJSON(game_path + "/discard_draw");
+    return false;
+  }
+
+  function library_draw() {
+    jQuery.getJSON(game_path + "/library_draw");
+    return false;
+  }
 
   $(".card").live("click", function() {
     var card_name = $(this).text();
@@ -7,15 +26,9 @@ jQuery(function() {
     return false;
   });
 
-  $("#discard").click(function() {
-    jQuery.getJSON(game_path + "/discard_draw");
-    return false;
-  });
+  $("#discard").click(discard_draw);
 
-  $("#library").click(function() {
-    jQuery.getJSON(game_path + "/library_draw");
-    return false;
-  });
+  $("#library").click(library_draw);
 
   $("#chat form").submit(function() {
     jQuery.post(
@@ -31,23 +44,34 @@ jQuery(function() {
   $(document).keypress(function(e) {
     if( $(e.currentTarget.activeElement).attr("nodeName") != "INPUT" ) {
       switch( e.charCode ) {
-        case 108: //lower case l
-          jQuery.getJSON(game_path + "/library_draw");
+        case 0: // escape
+          key_multiplier = 0;
           e.preventDefault();
           break;
-        case 100: //lower case d
-          jQuery.getJSON(game_path + "/discard_draw");
+
+        case 100: // lower case d
+          multiplier_times_do(function() { discard_draw(); });
           e.preventDefault();
           break;
+
+        case 108: // lower case l
+          multiplier_times_do(function() { library_draw(); });
+          e.preventDefault();
+          break;
+
         default: 
-          console.log(e.charCode);
+          if( e.charCode >= 48 && e.charCode <= 57 ) { // 0 to 9
+            // Add the number onto the multiplier. So if you hit
+            // 1 then 0 then 8 the multiplier would be 108.
+            key_multiplier = key_multiplier * 10 + e.charCode - 48;
+          };
       }
     }
   });
 
   function comet_request() {
     jQuery.getJSON(game_path + "/comet", {}, function(data){
-      update_page(data);
+      update_page(data)
       comet_request();
     });
   }
@@ -56,7 +80,8 @@ jQuery(function() {
 });
 
 function update_page(data) {
-  // basic data swapping
+  if(data == null) return false;
+
   $("#deck_size").text(data.deck_size);
   $("#opponent_size").text(data.opponent_size);
   $("#player_size").text(data.player_size);
@@ -67,6 +92,8 @@ function update_page(data) {
   }
   update_card_list(data.player_hand);
   add_new_messages(data.new_messages);
+
+  return true;
 };
 
 function update_card_list(cards) {

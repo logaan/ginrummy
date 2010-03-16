@@ -29,7 +29,7 @@
     {% if top_of_discard %}
       <a href="/game/{{ game_name }}/discard_draw" id="discard">{{ top_of_discard }}</a>
     {% else %}
-      Empty
+      <a href="/game/{{ game_name }}/discard_draw" id="discard">Empty</a>
     {% endif %}
     </dd>
 
@@ -45,21 +45,15 @@
 
   <h2>Your hand</h2>
   <p><span id="player_size">{{ card_count }}</span> cards</p>
-  {% if your_hand %}
   <ul id="player_cards">
   {% for card in your_hand %}
     <li><a href="/game/{{ game_name }}/discard/{{ card }}" class="card">{{ card }}</a></li>
   {% endfor %}
   </ul>
-  {% else %}
-    Empty
-  {% endif %}
 
   <h2>Instructions</h2>
   <p>
-    You can draw from the library by pressing the l key.
-    Or from the discard pile by pressing the d key.
-    But only if you don't have the text box selected.
+  You can draw from the library by pressing the l key. Or from the discard pile by pressing the d key. You can prefix these commands with digits to multiply the number of times they happen. Hitting escape will clear the digits. For example you could type "3, ESC, 1, 0, l" to draw 10 cards from the library. But only if you don't have the text box selected.
   </p>
 
 </div>
