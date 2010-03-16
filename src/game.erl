@@ -75,7 +75,9 @@ hand_move(ZoneName, PlayerNumber, Strategy, Game = #game{players=Players, zones=
   sort_hands(replace_player(PlayerNumber, NewPlayer, NewGame)).
 
 move(ToDeck, [Card | FromDeck ]) ->
-  {[Card | ToDeck], FromDeck}.
+  {[Card | ToDeck], FromDeck};
+move(ToDeck, FromDeck = []) ->
+  {ToDeck, FromDeck}.
 
 sort_hands(Game = #game{ players=[PlayerOne, PlayerTwo] }) ->
   CardCompare = fun(#card{properties=Prop1}, #card{properties=Prop2}) ->
@@ -101,29 +103,20 @@ replace_property(NewProp={Key, _Value}, Proplist) ->
   [NewProp | proplists:delete(Key, Proplist)].
 
 test() ->
-  test_library_draw(),
-  test_discard_draw(),
-  test_discard(),
+  Game1 = start_game("foo", "bar"),
+
+  Game2 = #game{players=[P11|_], zones=Zones1} = game:discard_draw(1, Game1),
+  Discard1 = proplists:get_value(discard, Zones1),
+  0 = length(P11#player.hand),
+  0 = length(Discard1),
+
+  Game3 = #game{players=[P12|_]} = game:library_draw(1, Game2),
+  [#card{name=CardName}|_] = P12#player.hand,
+
+  #game{players=[P13|_], zones=Zones2} = game:discard(1, CardName, Game3),
+  Discard2 = proplists:get_value(discard, Zones2),
+  0 = length(P13#player.hand),
+  1 = length(Discard2),
+
   ok.
 
-test_library_draw() ->
-  Game = start_game("foo", "bar"),
-  #game{players=[P1|_], zones=Zones} = game:library_draw(1, Game),
-  Deck = proplists:get_value(deck, Zones),
-  11 = length(P1#player.hand),
-  30 = length(Deck).
-
-test_discard_draw() ->
-  Game = start_game("foo", "bar"),
-  #game{players=[P1|_], zones=Zones} = game:discard_draw(1, Game),
-  Discard = proplists:get_value(discard, Zones),
-  11 = length(P1#player.hand),
-  0 = length(Discard).
-
-test_discard() ->
-  Game = #game{players=[OP1|_]} = start_game("foo", "bar"),
-  [#card{name=CardName}|_] = OP1#player.hand,
-  #game{players=[P1|_], zones=Zones} = game:discard(1, CardName, Game),
-  Discard = proplists:get_value(discard, Zones),
-  9 = length(P1#player.hand),
-  2 = length(Discard).
