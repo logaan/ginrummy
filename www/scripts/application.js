@@ -42,7 +42,8 @@ jQuery(function() {
   });
 
   $(document).keypress(function(e) {
-    if( $(e.currentTarget.activeElement).attr("nodeName") != "INPUT" ) {
+    if( ($(e.currentTarget.activeElement).attr("nodeName") != "INPUT") &&
+         e.ctrlKey ) {
       switch( e.which ) {
         case 0: // escape
           key_multiplier = 0;
