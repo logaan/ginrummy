@@ -64,7 +64,11 @@ handle_request(GameName, ["comet"]) ->
     {chat_messages, PlayerNumber, Messages} ->
       chat_server:unlisten(PlayerNumber, self(), Game#game.chat_server),
       {game_state, NewGame} = gen_server:call(AtomicGameName, game_state),
-      {render, "game/comet.html", json_view_data(NewGame, PlayerNumber, Messages)}
+      {render, "game/comet.html", json_view_data(NewGame, PlayerNumber, Messages)};
+    refresh ->
+      chat_server:unlisten(PlayerNumber, self(), Game#game.chat_server),
+      {game_state, NewGame} = gen_server:call(AtomicGameName, game_state),
+      {render, "game/comet.html", json_view_data(NewGame, PlayerNumber, [])}
   end;
 
 handle_request(GameName, ["broadcast"]) ->

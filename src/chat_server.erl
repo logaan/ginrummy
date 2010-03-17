@@ -9,7 +9,7 @@
 -behaviour(gen_server).
 
 %% API
--export([start_link/0, subscribe/2, listen/3, unlisten/3, state/1, broadcast/2, test/0]).
+-export([start_link/0, subscribe/2, listen/3, unlisten/3, state/1, broadcast/2, refresh/1, test/0]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
@@ -39,6 +39,8 @@ state(Pid) ->
   gen_server:call(Pid, state).
 broadcast(Message, Pid) ->
   gen_server:cast(Pid, {broadcast, Message}).
+refresh(Pid) ->
+  gen_server:cast(Pid, refresh).
 
 %%====================================================================
 %% gen_server callbacks
@@ -97,6 +99,10 @@ handle_cast({unlisten, Name, ProcessID}, State = #state{ listeners=Listeners }) 
 handle_cast({subscribe, Name}, State = #state{ subscribers=Subscribers }) ->
   NewSubscriber = #subscriber{ name=Name },
   {noreply, State#state{ subscribers=[NewSubscriber|Subscribers] } };
+
+handle_cast(refresh, State = #state{listeners=Listeners}) ->
+  [Listner#listener.process_id ! refresh || Listner <- Listeners ],
+  {noreply, State};
 
 handle_cast(_Msg, State) ->
   {noreply, State}.
