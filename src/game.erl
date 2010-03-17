@@ -85,7 +85,6 @@ sort_hand(PlayerNumber, NewOrder, Game) ->
   OrderedIntersection = [RealCard || OrderCard <- NewOrder, RealCard = #card{name=Name} <- Hand, OrderCard == Name ],
   NotInOrder = fun(#card{name=Name}) -> not lists:member(Name, NewOrder) end,
   NewCards = lists:filter(NotInOrder, Hand),
-  io:format("NewCards: ~p~n", [NewCards]),
   NewHand = lists:append(OrderedIntersection, NewCards),
   replace_player(PlayerNumber, Player#player{hand=NewHand}, Game).
 
