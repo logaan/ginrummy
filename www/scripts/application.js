@@ -79,26 +79,30 @@ jQuery(function() {
 
   //
   // Sorting
-  $("#player_cards").sortable({
-    update: function(event, ui) {
-      var card_names = $("#player_cards a").map(function(i, e){
-        return $(e).text();
-      });
+  function apply_sort() {
+    $("#player_cards").sortable({
+      update: function(event, ui) {
+        var card_names = $("#player_cards a").map(function(i, e){
+          return $(e).text();
+        });
 
-      jQuery.post(
-        game_path + "/sort",
-        {"card_names": JSON.stringify(card_names.toArray())},
-        jQuery.noop,
-        "json"
-      );
-    }
-  });
+        jQuery.post(
+          game_path + "/sort",
+          {"card_names": JSON.stringify(card_names.toArray())},
+          jQuery.noop,
+          "json"
+        );
+      }
+    });
+  }
+  apply_sort();
 
   // 
   // Longpoll comet
   function comet_request() {
     jQuery.getJSON(game_path + "/comet", {}, function(data){
       update_page(data)
+      apply_sort();
       comet_request();
     });
   }
