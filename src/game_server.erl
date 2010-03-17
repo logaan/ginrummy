@@ -23,7 +23,7 @@ discard_draw(Game, Player) ->
 discard(Game, Player, CardName) ->
   gen_server:call(Game, {discard, Player, CardName}).
 sort(Game, PlayerNumber, NewOrder) ->
-  io:format("~p~n~p~n~p~n", [Game, PlayerNumber, NewOrder]).
+  gen_server:call(Game, {sort, PlayerNumber, NewOrder}).
 game_state(Game) ->
   gen_server:call(Game, game_state).
 stop() ->
@@ -62,6 +62,10 @@ handle_call({discard, Player, CardName}, _From, State) ->
   Message = lists:concat([player_name(State, Player), " discarded ", CardName]),
   chat_server:broadcast(Message, NewState#game.chat_server),
   {reply, {discard, NewState}, NewState};
+
+handle_call({sort, PlayerNumber, NewOrder}, _From, State) ->
+  NewState = game:sort_hand(PlayerNumber, NewOrder, State),
+  {reply, {sort, NewState}, NewState};
 
 handle_call(game_state, _From, State) ->
   {reply, {game_state, State}, State}.

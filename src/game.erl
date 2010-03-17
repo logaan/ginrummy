@@ -1,7 +1,7 @@
 -module(game).
 -include_lib("stdlib/include/qlc.hrl").
 -include("records.hrl").
--export([start_game/2, new_deck/0, library_draw/2, discard_draw/2, discard/3, test/0]).
+-export([start_game/2, new_deck/0, library_draw/2, discard_draw/2, discard/3, sort_hand/3, test/0]).
 
 start_game(Player1Name, Player2Name) ->
   Zones = [{discard, []}, {deck, new_deck()}],
@@ -79,20 +79,20 @@ move(ToDeck, [Card | FromDeck ]) ->
 move(ToDeck, FromDeck = []) ->
   {ToDeck, FromDeck}.
 
+sort_hand(PlayerNumber, NewOrder, Game) ->
+  Player = get_player(PlayerNumber, Game),
+  Hand = Player#player.hand,
+  OrderedIntersection = [RealCard || OrderCard <- NewOrder, RealCard = #card{name=Name} <- Hand, OrderCard == Name ],
+  NewCards = [Card || Card = #card{name=Name} <- Hand, not lists:member(Name, NewOrder)],
+  io:format("NewCards: ~p~n", [NewCards]),
+  NewHand = lists:append(OrderedIntersection, NewCards),
+  replace_player(PlayerNumber, Player#player{hand=NewHand}, Game).
+
+get_player(Number, #game{players=Players}) ->
+  lists:nth(Number, Players).
+
 sort_hands(Game = #game{ players=[PlayerOne, PlayerTwo] }) ->
-  CardCompare = fun(#card{properties=Prop1}, #card{properties=Prop2}) ->
-    proplists:get_value(value, Prop1) > proplists:get_value(value, Prop2)
-  end,
-  Player1Hand = PlayerOne#player.hand,
-  Player2Hand = PlayerTwo#player.hand,
-  NewPlayer1Hand = lists:sort(CardCompare, Player1Hand),
-  NewPlayer2Hand = lists:sort(CardCompare, Player2Hand),
-  Game#game{
-    players=[
-      PlayerOne#player{ hand=NewPlayer1Hand },
-      PlayerTwo#player{ hand=NewPlayer2Hand }
-    ]
-  }.
+  Game.
   
 replace_player(Number, Player, Game = #game{ players=Players }) ->
   {Head, [_OldPlayer|Tail]} = lists:split(Number - 1, Players),
