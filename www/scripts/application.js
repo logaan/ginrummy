@@ -2,14 +2,8 @@ jQuery(function() {
   var key_multiplier = 0;
   var game_path = window.location.pathname;
 
-  function multiplier_times_do(func) {
-    func();
-    for(var i = 1; i < key_multiplier; i++) {
-      func();
-    }
-    key_multiplier = 0;
-  }
-
+  //
+  // Click behaviors
   function discard_draw() {
     jQuery.getJSON(game_path + "/discard_draw");
     return false;
@@ -41,9 +35,18 @@ jQuery(function() {
     return false;
   });
 
+  //
+  // Keyboard behavior
+  function multiplier_times_do(func) {
+    func();
+    for(var i = 1; i < key_multiplier; i++) {
+      func();
+    }
+    key_multiplier = 0;
+  }
+
   $(document).keypress(function(e) {
-    if( ($(e.currentTarget.activeElement).attr("nodeName") != "INPUT") &&
-         e.ctrlKey ) {
+    if( ($(e.currentTarget.activeElement).attr("nodeName") != "INPUT") ) {
       switch( e.which ) {
         case 0: // escape
           key_multiplier = 0;
@@ -51,13 +54,17 @@ jQuery(function() {
           break;
 
         case 100: // lower case d
-          multiplier_times_do(function() { discard_draw(); });
-          e.preventDefault();
+          if( e.ctrlKey ) {
+            multiplier_times_do(function() { discard_draw(); });
+            e.preventDefault();
+          }
           break;
 
         case 108: // lower case l
-          multiplier_times_do(function() { library_draw(); });
-          e.preventDefault();
+          if( e.ctrlKey ) {
+            multiplier_times_do(function() { library_draw(); });
+            e.preventDefault();
+          }
           break;
 
         default: 
@@ -70,6 +77,25 @@ jQuery(function() {
     }
   });
 
+  //
+  // Sorting
+  $("#player_cards").sortable({
+    update: function(event, ui) {
+      var card_names = $("#player_cards a").map(function(i, e){
+        return $(e).text();
+      });
+
+      jQuery.post(
+        game_path + "/sort",
+        {"card_names": JSON.stringify(card_names.toArray())},
+        jQuery.noop,
+        "json"
+      );
+    }
+  });
+
+  // 
+  // Longpoll comet
   function comet_request() {
     jQuery.getJSON(game_path + "/comet", {}, function(data){
       update_page(data)

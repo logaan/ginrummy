@@ -47,9 +47,9 @@ handle_request(GameName, ["discard_draw"]) ->
   end;
 
 handle_request(GameName, ["discard", CardName]) ->
-  AtomicGameName    = list_to_atom(GameName),
-  PlayerNumber      = beepbeep_args:get_session_data(AtomicGameName, Env),
-  {discard, _} = gen_server:call(AtomicGameName, {discard, PlayerNumber, CardName}),
+  AtomicGameName = list_to_atom(GameName),
+  PlayerNumber   = beepbeep_args:get_session_data(AtomicGameName, Env),
+  {discard, _}   = gen_server:call(AtomicGameName, {discard, PlayerNumber, CardName}),
   case is_ajax_request() of
     true  -> {render, "game/discard.html", []};
     false -> {redirect, lists:concat(["/game/", GameName])}
@@ -73,10 +73,21 @@ handle_request(GameName, ["broadcast"]) ->
   {game_state, Game} = gen_server:call(AtomicGameName, game_state),
   Message            = beepbeep_args:get_param("message", Env),
   Player             = lists:nth(PlayerNumber, Game#game.players),
-  FormattedMessage = lists:concat([Player#player.name, " : ", Message]),
+  FormattedMessage   = lists:concat([Player#player.name, " : ", Message]),
   chat_server:broadcast(FormattedMessage, Game#game.chat_server),
   case is_ajax_request() of
     true  -> {render, "game/broadcast.html", []};
+    false -> {redirect, lists:concat(["/game/", GameName])}
+  end;
+
+handle_request(GameName, ["sort"]) ->
+  AtomicGameName  = list_to_atom(GameName),
+  PlayerNumber    = beepbeep_args:get_session_data(AtomicGameName, Env),
+  BinaryCardNames = mochijson2:decode(beepbeep_args:get_param("card_names", Env)),
+  StringCardNames = lists:map(fun binary_to_list/1, BinaryCardNames),
+  game_server:sort(AtomicGameName, PlayerNumber, StringCardNames),
+  case is_ajax_request() of
+    true  -> {render, "game/sort.html", []};
     false -> {redirect, lists:concat(["/game/", GameName])}
   end.
 
@@ -101,9 +112,7 @@ json_view_data(#game{ players=[PlayerOne, PlayerTwo], zones=Zones }, PlayerNumbe
     1 -> Player = PlayerOne, Opponent = PlayerTwo;
     2 -> Player = PlayerTwo, Opponent = PlayerOne
   end,
-
   FormattedMessages = lists:map(fun(M) -> list_to_binary(M) end, Messages),
-
   Data = {struct, [
     {"player_size",     length(Player#player.hand)},
     {"player_hand",     card_list(Player)},
@@ -112,7 +121,6 @@ json_view_data(#game{ players=[PlayerOne, PlayerTwo], zones=Zones }, PlayerNumbe
     {"top_of_discard",  list_to_binary(top_of_discard(Discard))},
     {"new_messages",    FormattedMessages}
   ]},
-
   [ {json, iolist_to_binary(mochijson2:encode(Data))} ] .
 
 card_list(Player) ->
