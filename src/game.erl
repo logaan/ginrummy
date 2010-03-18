@@ -1,14 +1,14 @@
 -module(game).
 -include_lib("stdlib/include/qlc.hrl").
 -include("records.hrl").
--export([start_game/2, new_deck/0, library_draw/2, discard_draw/2, discard/3, sort_hand/3, test/0]).
+-export([start_game/2, new_deck/0, library_draw/2, discard_draw/2, discard/3, manual_sort/3, value_sort/1, test/0]).
 
 start_game(Player1Name, Player2Name) ->
   Zones = [{discard, []}, {deck, new_deck()}],
   Player1 = #player{ name = Player1Name },
   Player2 = #player{ name = Player2Name },
   {ok, ChatServer} = chat_server:start_link(),
-  sort_hands(#game{ players=[Player1, Player2], zones=Zones, chat_server=ChatServer }).
+  #game{ players=[Player1, Player2], zones=Zones, chat_server=ChatServer }.
 
 new_deck() ->
   shuffle_deck(generate_playing_cards()).
@@ -72,14 +72,14 @@ hand_move(ZoneName, PlayerNumber, Strategy, Game = #game{players=Players, zones=
   % Recompose
   NewPlayer = Player#player{hand=NewHand},
   NewGame   = Game#game{zones=replace_property({ZoneName, NewZone}, Zones)},
-  sort_hands(replace_player(PlayerNumber, NewPlayer, NewGame)).
+  replace_player(PlayerNumber, NewPlayer, NewGame).
 
 move(ToDeck, [Card | FromDeck ]) ->
   {[Card | ToDeck], FromDeck};
 move(ToDeck, FromDeck = []) ->
   {ToDeck, FromDeck}.
 
-sort_hand(PlayerNumber, NewOrder, Game) ->
+manual_sort(PlayerNumber, NewOrder, Game) ->
   Player = get_player(PlayerNumber, Game),
   Hand = Player#player.hand,
   OrderedIntersection = [RealCard || OrderCard <- NewOrder, RealCard = #card{name=Name} <- Hand, OrderCard == Name ],
@@ -91,8 +91,20 @@ sort_hand(PlayerNumber, NewOrder, Game) ->
 get_player(Number, #game{players=Players}) ->
   lists:nth(Number, Players).
 
-sort_hands(Game = #game{ players=[PlayerOne, PlayerTwo] }) ->
-  Game.
+value_sort(Game = #game{ players=[PlayerOne, PlayerTwo] }) ->
+  CardCompare = fun(#card{properties=Prop1}, #card{properties=Prop2}) ->
+    proplists:get_value(value, Prop1) > proplists:get_value(value, Prop2)
+  end,
+  Player1Hand = PlayerOne#player.hand,
+  Player2Hand = PlayerTwo#player.hand,
+  NewPlayer1Hand = lists:sort(CardCompare, Player1Hand),
+  NewPlayer2Hand = lists:sort(CardCompare, Player2Hand),
+  Game#game{
+    players=[
+      PlayerOne#player{ hand=NewPlayer1Hand },
+      PlayerTwo#player{ hand=NewPlayer2Hand }
+    ]
+  }.
   
 replace_player(Number, Player, Game = #game{ players=Players }) ->
   {Head, [_OldPlayer|Tail]} = lists:split(Number - 1, Players),

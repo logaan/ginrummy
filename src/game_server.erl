@@ -64,7 +64,7 @@ handle_call({discard, Player, CardName}, _From, State) ->
   {reply, {discard, NewState}, NewState};
 
 handle_call({sort, PlayerNumber, NewOrder}, _From, State) ->
-  NewState = game:sort_hand(PlayerNumber, NewOrder, State),
+  NewState = game:manual_sort(PlayerNumber, NewOrder, State),
   chat_server:refresh(NewState#game.chat_server),
   {reply, {sort, NewState}, NewState};
 
