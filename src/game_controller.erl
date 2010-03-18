@@ -84,14 +84,22 @@ handle_request(GameName, ["broadcast"]) ->
     false -> {redirect, lists:concat(["/game/", GameName])}
   end;
 
-handle_request(GameName, ["sort"]) ->
+handle_request(GameName, ["manual_sort"]) ->
   AtomicGameName  = list_to_atom(GameName),
   PlayerNumber    = beepbeep_args:get_session_data(AtomicGameName, Env),
   BinaryCardNames = mochijson2:decode(beepbeep_args:get_param("card_names", Env)),
   StringCardNames = lists:map(fun binary_to_list/1, BinaryCardNames),
-  game_server:sort(AtomicGameName, PlayerNumber, StringCardNames),
+  game_server:manual_sort(AtomicGameName, PlayerNumber, StringCardNames),
   case is_ajax_request() of
-    true  -> {render, "game/sort.html", []};
+    true  -> {render, "game/manual_sort.html", []};
+    false -> {redirect, lists:concat(["/game/", GameName])}
+  end;
+
+handle_request(GameName, ["value_sort"]) ->
+  AtomicGameName = list_to_atom(GameName),
+  game_server:value_sort(AtomicGameName),
+  case is_ajax_request() of
+    true  -> {render, "game/value_sort.html", []};
     false -> {redirect, lists:concat(["/game/", GameName])}
   end.
 

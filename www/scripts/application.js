@@ -24,6 +24,11 @@ jQuery(function() {
 
   $("#library").click(library_draw);
 
+  $("#value_sort").click(function() {
+    jQuery.get(game_path + "/value_sort");
+    return false;
+  });
+
   $("#chat form").submit(function() {
     jQuery.post(
       game_path + "/broadcast",
@@ -87,7 +92,7 @@ jQuery(function() {
         });
 
         jQuery.post(
-          game_path + "/sort",
+          game_path + "/manual_sort",
           {"card_names": JSON.stringify(card_names.toArray())},
           jQuery.noop,
           "json"

@@ -45,6 +45,7 @@
 
   <h2>Your hand</h2>
   <p><span id="player_size">{{ card_count }}</span> cards</p>
+  <p><a href="/game/{{ game_name }}/value_sort" id="value_sort">Sort by value</a></p>
   <ul id="player_cards">
   {% for card in your_hand %}
     <li><a href="/game/{{ game_name }}/discard/{{ card }}" class="card">{{ card }}</a></li>

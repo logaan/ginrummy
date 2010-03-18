@@ -3,7 +3,7 @@
 -include("records.hrl").
 
 %% API
--export([start/2, library_draw/2, discard_draw/2, discard/3, sort/3, game_state/1, stop/0]).
+-export([start/2, library_draw/2, discard_draw/2, discard/3, manual_sort/3, value_sort/1, game_state/1, stop/0]).
 
 %% gen-server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
@@ -22,8 +22,10 @@ discard_draw(Game, Player) ->
   gen_server:call(Game, {discard_draw, Player}).
 discard(Game, Player, CardName) ->
   gen_server:call(Game, {discard, Player, CardName}).
-sort(Game, PlayerNumber, NewOrder) ->
-  gen_server:call(Game, {sort, PlayerNumber, NewOrder}).
+manual_sort(Game, PlayerNumber, NewOrder) ->
+  gen_server:call(Game, {manual_sort, PlayerNumber, NewOrder}).
+value_sort(Game) ->
+  gen_server:call(Game, value_sort).
 game_state(Game) ->
   gen_server:call(Game, game_state).
 stop() ->
@@ -63,10 +65,15 @@ handle_call({discard, Player, CardName}, _From, State) ->
   chat_server:broadcast(Message, NewState#game.chat_server),
   {reply, {discard, NewState}, NewState};
 
-handle_call({sort, PlayerNumber, NewOrder}, _From, State) ->
+handle_call({manual_sort, PlayerNumber, NewOrder}, _From, State) ->
   NewState = game:manual_sort(PlayerNumber, NewOrder, State),
   chat_server:refresh(NewState#game.chat_server),
-  {reply, {sort, NewState}, NewState};
+  {reply, {manual_sort, NewState}, NewState};
+
+handle_call(value_sort, _From, State) ->
+  NewState = game:value_sort(State),
+  chat_server:refresh(NewState#game.chat_server),
+  {reply, {value_sort, NewState}, NewState};
 
 handle_call(game_state, _From, State) ->
   {reply, {game_state, State}, State}.
