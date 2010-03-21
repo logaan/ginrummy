@@ -22,26 +22,35 @@
     </form>
   </div>
 
-  <h2>Game info</h2>
-  <dl>
-    <dt>Discard pile</dt>
-    <dd>
-    {% if top_of_discard %}
-      <a href="/game/{{ game_name }}/discard_draw" id="discard">{{ top_of_discard }}</a>
-    {% else %}
-      <a href="/game/{{ game_name }}/discard_draw" id="discard">Empty</a>
-    {% endif %}
-    </dd>
+  <h2>Zones</h2>
+  <h3>Discard pile</h3>
+  <ul>
+    <li>
+      <a href="/game/{{ game_name }}/discard_draw" id="discard">
+      {% if top_of_discard %}
+        {{ top_of_discard }}
+      {% else %}
+        Empty
+      {% endif %}
+      </a>
+    </li>
+  </ul>
 
-    <dt>Library</dt>
-    <dd>
+  <h3>Library</h3>
+  <ul>
+    <li>
       <a href="/game/{{ game_name }}/library_draw" id="library">
         <span id="deck_size">{{ deck_size }}</span> cards
       </a>
-    </dd>
-    <dt>{{ player_two_name }}'s hand</dt>
-    <dd><span id="opponent_size">{{ opponent_size }}</span> cards</dd>
-  </dl>
+    </li>
+  </ul>
+
+  <h3>{{ player_two_name }}'s hand</h3>
+  <ul>
+    <li>
+      <span id="opponent_size">{{ opponent_size }}</span> cards
+    </li>
+  </ul>
 
   <h2>Your hand</h2>
   <p><span id="player_size">{{ card_count }}</span> cards</p>

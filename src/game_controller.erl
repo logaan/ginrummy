@@ -6,14 +6,14 @@ handle_request("start",[]) ->
   PlayerOneName       = beepbeep_args:get_param("player_one_name",Env),
   PlayerTwoName       = beepbeep_args:get_param("player_two_name",Env),
   {AtomicGameName, _} = game_server:start(PlayerOneName, PlayerTwoName),
-  {game_state, Game}  = gen_server:call(AtomicGameName, game_state),
+  {game_state, Game}  = game_server:game_state(AtomicGameName),
   beepbeep_args:set_session_data(AtomicGameName, 1, Env),
   chat_server:subscribe(1, Game#game.chat_server),
   {redirect, lists:concat(["/game/", AtomicGameName])};
 
 handle_request(GameName, []) ->
   AtomicGameName         = list_to_atom(GameName),
-  {game_state, Game}     = gen_server:call(AtomicGameName, game_state),
+  {game_state, Game}     = game_server:game_state(AtomicGameName),
   [PlayerOne, PlayerTwo] = Game#game.players,
 
   ViewData = case beepbeep_args:get_session_data(AtomicGameName, Env) of
@@ -31,58 +31,46 @@ handle_request(GameName, []) ->
 handle_request(GameName, ["library_draw"]) ->
   AtomicGameName    = list_to_atom(GameName),
   PlayerNumber      = beepbeep_args:get_session_data(AtomicGameName, Env),
-  {library_draw, _} = gen_server:call(AtomicGameName, {library_draw, PlayerNumber}),
-  case is_ajax_request() of
-    true  -> {render, "game/library_draw.html", []};
-    false -> {redirect, lists:concat(["/game/", GameName])}
-  end;
+  {library_draw, _} = game_server:library_draw(AtomicGameName, PlayerNumber),
+  ajax_response(GameName);
 
 handle_request(GameName, ["discard_draw"]) ->
   AtomicGameName    = list_to_atom(GameName),
   PlayerNumber      = beepbeep_args:get_session_data(AtomicGameName, Env),
-  {discard_draw, _} = gen_server:call(AtomicGameName, {discard_draw, PlayerNumber}),
-  case is_ajax_request() of
-    true  -> {render, "game/discard_draw.html", []};
-    false -> {redirect, lists:concat(["/game/", GameName])}
-  end;
+  {discard_draw, _} = game_server:discard_draw(AtomicGameName, PlayerNumber),
+  ajax_response(GameName);
 
 handle_request(GameName, ["discard", CardName]) ->
   AtomicGameName = list_to_atom(GameName),
   PlayerNumber   = beepbeep_args:get_session_data(AtomicGameName, Env),
-  {discard, _}   = gen_server:call(AtomicGameName, {discard, PlayerNumber, CardName}),
-  case is_ajax_request() of
-    true  -> {render, "game/discard.html", []};
-    false -> {redirect, lists:concat(["/game/", GameName])}
-  end;
+  {discard, _}   = game_server:discard(AtomicGameName, PlayerNumber, CardName),
+  ajax_response(GameName);
 
 handle_request(GameName, ["comet"]) ->
   AtomicGameName     = list_to_atom(GameName),
   PlayerNumber       = beepbeep_args:get_session_data(AtomicGameName, Env),
-  {game_state, Game} = gen_server:call(AtomicGameName, game_state),
+  {game_state, Game} = game_server:game_state(AtomicGameName),
   chat_server:listen(PlayerNumber, self(), Game#game.chat_server),
   receive
     {chat_messages, PlayerNumber, Messages} ->
       chat_server:unlisten(PlayerNumber, self(), Game#game.chat_server),
-      {game_state, NewGame} = gen_server:call(AtomicGameName, game_state),
+      {game_state, NewGame} = game_server:game_state(AtomicGameName),
       {render, "game/comet.html", json_view_data(NewGame, PlayerNumber, Messages)};
     refresh ->
       chat_server:unlisten(PlayerNumber, self(), Game#game.chat_server),
-      {game_state, NewGame} = gen_server:call(AtomicGameName, game_state),
+      {game_state, NewGame} = game_server:game_state(AtomicGameName),
       {render, "game/comet.html", json_view_data(NewGame, PlayerNumber, [])}
   end;
 
 handle_request(GameName, ["broadcast"]) ->
   AtomicGameName     = list_to_atom(GameName),
   PlayerNumber       = beepbeep_args:get_session_data(AtomicGameName, Env),
-  {game_state, Game} = gen_server:call(AtomicGameName, game_state),
+  {game_state, Game} = game_server:game_state(AtomicGameName),
   Message            = beepbeep_args:get_param("message", Env),
   Player             = lists:nth(PlayerNumber, Game#game.players),
   FormattedMessage   = lists:concat([Player#player.name, " : ", Message]),
   chat_server:broadcast(FormattedMessage, Game#game.chat_server),
-  case is_ajax_request() of
-    true  -> {render, "game/broadcast.html", []};
-    false -> {redirect, lists:concat(["/game/", GameName])}
-  end;
+  ajax_response(GameName);
 
 handle_request(GameName, ["manual_sort"]) ->
   AtomicGameName  = list_to_atom(GameName),
@@ -90,18 +78,12 @@ handle_request(GameName, ["manual_sort"]) ->
   BinaryCardNames = mochijson2:decode(beepbeep_args:get_param("card_names", Env)),
   StringCardNames = lists:map(fun binary_to_list/1, BinaryCardNames),
   game_server:manual_sort(AtomicGameName, PlayerNumber, StringCardNames),
-  case is_ajax_request() of
-    true  -> {render, "game/manual_sort.html", []};
-    false -> {redirect, lists:concat(["/game/", GameName])}
-  end;
+  ajax_response(GameName);
 
 handle_request(GameName, ["value_sort"]) ->
   AtomicGameName = list_to_atom(GameName),
   game_server:value_sort(AtomicGameName),
-  case is_ajax_request() of
-    true  -> {render, "game/value_sort.html", []};
-    false -> {redirect, lists:concat(["/game/", GameName])}
-  end.
+  ajax_response(GameName).
 
 html_view_data(#game{zones=Zones}, CurrentPlayer, Opponent) ->
   Deck    = proplists:get_value(deck, Zones),
@@ -143,6 +125,13 @@ top_of_discard([]) ->
   "";
 top_of_discard([Head|_Tail]) ->
   Head#card.name.
+
+ajax_response(GameName) ->
+  Action = lists:nth(3, string:tokens(beepbeep_args:path(Env), "/")),
+  case is_ajax_request() of
+    true  -> {render, lists:concat(["game/", Action, ".html"]), []};
+    false -> {redirect, lists:concat(["/game/", GameName])}
+  end.
 
 is_ajax_request() ->
   AllHeaders   = beepbeep_args:get_all_headers(Env),
