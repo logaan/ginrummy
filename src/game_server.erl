@@ -17,19 +17,19 @@ start(Player1Name, Player2Name) ->
   GameName = list_to_atom(lists:concat(["g", Id])),
   {GameName, gen_server:start_link({local, GameName}, ?MODULE, [Player1Name, Player2Name], [])}.
 library_draw(Game, Player) ->
-  gen_server:call(Game, {library_draw, Player}).
+  gen_server_call(Game, {library_draw, Player}).
 discard_draw(Game, Player) ->
-  gen_server:call(Game, {discard_draw, Player}).
+  gen_server_call(Game, {discard_draw, Player}).
 discard(Game, Player, CardName) ->
-  gen_server:call(Game, {discard, Player, CardName}).
+  gen_server_call(Game, {discard, Player, CardName}).
 manual_sort(Game, PlayerNumber, NewOrder) ->
-  gen_server:call(Game, {manual_sort, PlayerNumber, NewOrder}).
+  gen_server_call(Game, {manual_sort, PlayerNumber, NewOrder}).
 value_sort(Game) ->
-  gen_server:call(Game, value_sort).
+  gen_server_call(Game, value_sort).
 game_state(Game) ->
-  gen_server:call(Game, game_state).
+  gen_server_call(Game, game_state).
 stop() ->
-  gen_server:call(?MODULE, stop).
+  gen_server_call(?MODULE, stop).
 
 %%====================================================================
 %% gen_server callbacks
@@ -84,6 +84,10 @@ handle_call(game_state, _From, State) ->
 player_name(#game{ players=Players }, Number) ->
   Player = lists:nth(Number, Players),
   Player#player.name.
+
+gen_server_call(Pid, Message) when is_list(Pid) ->
+  AtomicPid = list_to_atom(Pid),
+  gen_server:call(AtomicPid, Message).
 
 %%====================================================================
 %%% Unit tests

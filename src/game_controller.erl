@@ -6,21 +6,21 @@ handle_request("start",[]) ->
   PlayerOneName       = beepbeep_args:get_param("player_one_name",Env),
   PlayerTwoName       = beepbeep_args:get_param("player_two_name",Env),
   {AtomicGameName, _} = game_server:start(PlayerOneName, PlayerTwoName),
-  {game_state, Game}  = game_server:game_state(AtomicGameName),
-  beepbeep_args:set_session_data(AtomicGameName, 1, Env),
+  GameName            = atom_to_list(AtomicGameName),
+  {game_state, Game}  = game_server:game_state(GameName),
+  beepbeep_args:set_session_data(GameName, 1, Env),
   chat_server:subscribe(1, Game#game.chat_server),
-  {redirect, lists:concat(["/game/", AtomicGameName])};
+  {redirect, lists:concat(["/game/", GameName])};
 
 handle_request(GameName, []) ->
-  AtomicGameName         = list_to_atom(GameName),
-  {game_state, Game}     = game_server:game_state(AtomicGameName),
+  {game_state, Game}     = game_server:game_state(GameName),
   [PlayerOne, PlayerTwo] = Game#game.players,
 
-  ViewData = case beepbeep_args:get_session_data(AtomicGameName, Env) of
+  ViewData = case beepbeep_args:get_session_data(GameName, Env) of
     1 -> html_view_data(Game, PlayerOne, PlayerTwo);
     2 -> html_view_data(Game, PlayerTwo, PlayerOne);
     undefined ->
-      beepbeep_args:set_session_data(AtomicGameName, 2, Env),
+      beepbeep_args:set_session_data(GameName, 2, Env),
       chat_server:subscribe(2, Game#game.chat_server),
       Message = lists:concat([PlayerTwo#player.name, " joined the game"]),
       chat_server:broadcast(Message, Game#game.chat_server),
@@ -29,43 +29,38 @@ handle_request(GameName, []) ->
   {render, "game/show.html", ViewData};
 
 handle_request(GameName, ["library_draw"]) ->
-  AtomicGameName    = list_to_atom(GameName),
-  PlayerNumber      = beepbeep_args:get_session_data(AtomicGameName, Env),
-  {library_draw, _} = game_server:library_draw(AtomicGameName, PlayerNumber),
+  PlayerNumber      = beepbeep_args:get_session_data(GameName, Env),
+  {library_draw, _} = game_server:library_draw(GameName, PlayerNumber),
   ajax_response(GameName);
 
 handle_request(GameName, ["discard_draw"]) ->
-  AtomicGameName    = list_to_atom(GameName),
-  PlayerNumber      = beepbeep_args:get_session_data(AtomicGameName, Env),
-  {discard_draw, _} = game_server:discard_draw(AtomicGameName, PlayerNumber),
+  PlayerNumber      = beepbeep_args:get_session_data(GameName, Env),
+  {discard_draw, _} = game_server:discard_draw(GameName, PlayerNumber),
   ajax_response(GameName);
 
 handle_request(GameName, ["discard", CardName]) ->
-  AtomicGameName = list_to_atom(GameName),
-  PlayerNumber   = beepbeep_args:get_session_data(AtomicGameName, Env),
-  {discard, _}   = game_server:discard(AtomicGameName, PlayerNumber, CardName),
+  PlayerNumber   = beepbeep_args:get_session_data(GameName, Env),
+  {discard, _}   = game_server:discard(GameName, PlayerNumber, CardName),
   ajax_response(GameName);
 
 handle_request(GameName, ["comet"]) ->
-  AtomicGameName     = list_to_atom(GameName),
-  PlayerNumber       = beepbeep_args:get_session_data(AtomicGameName, Env),
-  {game_state, Game} = game_server:game_state(AtomicGameName),
+  PlayerNumber       = beepbeep_args:get_session_data(GameName, Env),
+  {game_state, Game} = game_server:game_state(GameName),
   chat_server:listen(PlayerNumber, self(), Game#game.chat_server),
   receive
     {chat_messages, PlayerNumber, Messages} ->
       chat_server:unlisten(PlayerNumber, self(), Game#game.chat_server),
-      {game_state, NewGame} = game_server:game_state(AtomicGameName),
+      {game_state, NewGame} = game_server:game_state(GameName),
       {render, "game/comet.html", json_view_data(NewGame, PlayerNumber, Messages)};
     refresh ->
       chat_server:unlisten(PlayerNumber, self(), Game#game.chat_server),
-      {game_state, NewGame} = game_server:game_state(AtomicGameName),
+      {game_state, NewGame} = game_server:game_state(GameName),
       {render, "game/comet.html", json_view_data(NewGame, PlayerNumber, [])}
   end;
 
 handle_request(GameName, ["broadcast"]) ->
-  AtomicGameName     = list_to_atom(GameName),
-  PlayerNumber       = beepbeep_args:get_session_data(AtomicGameName, Env),
-  {game_state, Game} = game_server:game_state(AtomicGameName),
+  PlayerNumber       = beepbeep_args:get_session_data(GameName, Env),
+  {game_state, Game} = game_server:game_state(GameName),
   Message            = beepbeep_args:get_param("message", Env),
   Player             = lists:nth(PlayerNumber, Game#game.players),
   FormattedMessage   = lists:concat([Player#player.name, " : ", Message]),
@@ -73,16 +68,14 @@ handle_request(GameName, ["broadcast"]) ->
   ajax_response(GameName);
 
 handle_request(GameName, ["manual_sort"]) ->
-  AtomicGameName  = list_to_atom(GameName),
-  PlayerNumber    = beepbeep_args:get_session_data(AtomicGameName, Env),
+  PlayerNumber    = beepbeep_args:get_session_data(GameName, Env),
   BinaryCardNames = mochijson2:decode(beepbeep_args:get_param("card_names", Env)),
   StringCardNames = lists:map(fun binary_to_list/1, BinaryCardNames),
-  game_server:manual_sort(AtomicGameName, PlayerNumber, StringCardNames),
+  game_server:manual_sort(GameName, PlayerNumber, StringCardNames),
   ajax_response(GameName);
 
 handle_request(GameName, ["value_sort"]) ->
-  AtomicGameName = list_to_atom(GameName),
-  game_server:value_sort(AtomicGameName),
+  game_server:value_sort(GameName),
   ajax_response(GameName).
 
 html_view_data(#game{zones=Zones}, CurrentPlayer, Opponent) ->

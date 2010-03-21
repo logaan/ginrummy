@@ -85,12 +85,12 @@ jQuery(function() {
   //
   // Sorting
   function apply_sort() {
-    $("#player_cards li").draggable();
-    $("#discard").droppable({
-      drop: function(event, ui) {
-        console.log("foo");
-      }
-    });
+    // $("#player_cards li").draggable();
+    // $("#discard").droppable({
+    //   drop: function(event, ui) {
+    //     console.log("foo");
+    //   }
+    // });
 
     $("#player_cards").sortable({
       update: function(event, ui) {
