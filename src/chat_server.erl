@@ -9,7 +9,8 @@
 -behaviour(gen_server).
 
 %% API
--export([start_link/0, subscribe/2, listen/3, unlisten/3, state/1, broadcast/2, refresh/1, test/0]).
+-export([start_link/0, subscribe/2, listen/3, unlisten/3, state/1,
+         broadcast/2, direct_message/3, refresh/1, test/0 ]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
@@ -39,6 +40,8 @@ state(Pid) ->
   gen_server:call(Pid, state).
 broadcast(Message, Pid) ->
   gen_server:cast(Pid, {broadcast, Message}).
+direct_message(Name, Message, Pid) ->
+  gen_server:cast(Pid, {direct_message, Name, Message}).
 refresh(Pid) ->
   gen_server:cast(Pid, refresh).
 
@@ -83,6 +86,13 @@ handle_cast({broadcast, Message}, State = #state{ subscribers=Subscribers }) ->
     Subscriber#subscriber{ messages=[Message|Messages] }
   end,
   NewState = State#state{ subscribers=lists:map(AddMessage, Subscribers) },
+  {noreply, update_listeners(NewState)};
+
+handle_cast({direct_message, Name, Message}, State = #state{ subscribers=Subscribers }) ->
+  {value, Subscriber=#subscriber{messages=Messages}} = lists:keysearch(Name, 2, Subscribers),
+  NewSubscriber = Subscriber#subscriber{ messages=[Message|Messages] },
+  NewSubscribers = lists:keyreplace(Name, 2, Subscribers, NewSubscriber),
+  NewState = State#state{ subscribers=NewSubscribers },
   {noreply, update_listeners(NewState)};
 
 handle_cast({listen, Name, ProcessID}, State = #state{ listeners=Listeners }) ->

@@ -87,7 +87,9 @@ player_name(#game{ players=Players }, Number) ->
 
 gen_server_call(Pid, Message) when is_list(Pid) ->
   AtomicPid = list_to_atom(Pid),
-  gen_server:call(AtomicPid, Message).
+  gen_server:call(AtomicPid, Message);
+gen_server_call(Pid, Message) ->
+  gen_server:call(Pid, Message).
 
 %%====================================================================
 %%% Unit tests

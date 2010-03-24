@@ -25,7 +25,7 @@ jQuery(function() {
   $("#library").click(library_draw);
 
   $("#value_sort").click(function() {
-    jQuery.get(game_path + "/value_sort");
+    jQuery.getJSON(game_path + "/value_sort");
     return false;
   });
 
