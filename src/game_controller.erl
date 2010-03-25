@@ -10,6 +10,7 @@ handle_request("start",[]) ->
   {state, Game}       = game_server:state(GameName),
   beepbeep_args:set_session_data(GameName, 1, Env),
   chat_server:subscribe(1, Game#game.chat_server),
+  chat_server:subscribe(2, Game#game.chat_server),
   {redirect, lists:concat(["/game/", GameName])};
 
 handle_request(GameName, []) ->
@@ -21,7 +22,6 @@ handle_request(GameName, []) ->
     2 -> html_view_data(Game, PlayerTwo, PlayerOne);
     undefined ->
       beepbeep_args:set_session_data(GameName, 2, Env),
-      chat_server:subscribe(2, Game#game.chat_server),
       Message = lists:concat([PlayerTwo#player.name, " joined the game"]),
       chat_server:broadcast({chat, Message}, Game#game.chat_server),
       html_view_data(Game, PlayerTwo, PlayerOne)
@@ -53,6 +53,9 @@ handle_request(GameName, ["knock"]) ->
   ajax_response(GameName);
 
 handle_request(GameName, ["comet"]) ->
+  % If the server goes down then so should the comet so that the client can
+  % re-connect to the restarted server
+  link(whereis(list_to_atom(GameName))),
   PlayerNumber       = beepbeep_args:get_session_data(GameName, Env),
   {state, Game}      = game_server:state(GameName),
   chat_server:listen(PlayerNumber, self(), Game#game.chat_server),

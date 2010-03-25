@@ -41,6 +41,8 @@ init([Player1Name, Player2Name, GameName]) ->
   {ok, game:start_game(Player1Name, Player2Name, GameName)};
 init(State) when is_record(State, game) ->
   {ok, ChatServer} = chat_server:start_link(),
+  chat_server:subscribe(1, ChatServer),
+  chat_server:subscribe(2, ChatServer),
   {ok, State#game{ chat_server=ChatServer }}.
 
 handle_cast(_Msg, State) -> {noreply, State}.
