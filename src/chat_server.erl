@@ -149,7 +149,7 @@ code_change(_OldVsn, State, _Extra) ->
 update_listeners(State = #state{ subscribers=Subscribers, listeners=Listeners }) ->
   spawn(fun() -> [
     Listener#listener.process_id !
-    {chat_messages, Subscriber#subscriber.name, Subscriber#subscriber.messages}    ||
+    {messages, Subscriber#subscriber.messages} ||
     Subscriber <- Subscribers,
     Listener <- Listeners,
     Subscriber#subscriber.name == Listener#listener.name,

@@ -23,7 +23,7 @@ handle_request(GameName, []) ->
       beepbeep_args:set_session_data(GameName, 2, Env),
       chat_server:subscribe(2, Game#game.chat_server),
       Message = lists:concat([PlayerTwo#player.name, " joined the game"]),
-      chat_server:broadcast(Message, Game#game.chat_server),
+      chat_server:broadcast({chat, Message}, Game#game.chat_server),
       html_view_data(Game, PlayerTwo, PlayerOne)
   end,
   {render, "game/show.html", ViewData};
@@ -48,10 +48,11 @@ handle_request(GameName, ["comet"]) ->
   {game_state, Game} = game_server:game_state(GameName),
   chat_server:listen(PlayerNumber, self(), Game#game.chat_server),
   receive
-    {chat_messages, PlayerNumber, Messages} ->
+    {messages, Messages} ->
       chat_server:unlisten(PlayerNumber, self(), Game#game.chat_server),
       {game_state, NewGame} = game_server:game_state(GameName),
-      {render, "game/comet.html", json_view_data(NewGame, PlayerNumber, Messages)};
+      ChatMessages = [ MessageText || {chat, MessageText} <- Messages],
+      {render, "game/comet.html", json_view_data(NewGame, PlayerNumber, ChatMessages)};
     refresh ->
       chat_server:unlisten(PlayerNumber, self(), Game#game.chat_server),
       {game_state, NewGame} = game_server:game_state(GameName),
@@ -64,7 +65,7 @@ handle_request(GameName, ["broadcast"]) ->
   Message            = beepbeep_args:get_param("message", Env),
   Player             = lists:nth(PlayerNumber, Game#game.players),
   FormattedMessage   = lists:concat([Player#player.name, " : ", Message]),
-  chat_server:broadcast(FormattedMessage, Game#game.chat_server),
+  chat_server:broadcast({chat, FormattedMessage}, Game#game.chat_server),
   ajax_response(GameName);
 
 handle_request(GameName, ["manual_sort"]) ->
