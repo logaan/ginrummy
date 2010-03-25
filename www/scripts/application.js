@@ -116,11 +116,23 @@ jQuery(function() {
 
   // 
   // Longpoll comet
+  // failed connections keeps track of how many times the comet request fails
+  // each fail slows down the comet request by another 400ms and then tries
+  // again. after 5 failures the comet polling stops.
+  var failed_connections = 0;
   function comet_request() {
     jQuery.getJSON(game_path + "/comet", {}, function(data){
-      update_page(data)
-      apply_sort();
-      comet_request();
+      if(data != null) {
+        failed_connections = 0;
+        update_page(data)
+        apply_sort();
+        comet_request();
+      } else {
+        failed_connections++;
+        if ( failed_connections <= 5 ) {
+          setTimeout(comet_request, 400 * failed_connections);
+        }
+      }
     });
   }
 
@@ -128,8 +140,6 @@ jQuery(function() {
 });
 
 function update_page(data) {
-  if(data == null) return false;
-
   $("#deck_size").text(data.deck_size);
   $("#opponent_size").text(data.opponent_size);
   $("#player_size").text(data.player_size);
