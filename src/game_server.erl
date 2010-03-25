@@ -3,7 +3,7 @@
 -include("records.hrl").
 
 %% API
--export([start/1, start/2, library_draw/2, discard_draw/2, discard/3, manual_sort/3, value_sort/2, game_state/1, stop/0]).
+-export([start/1, start/2, library_draw/2, discard_draw/2, discard/3, manual_sort/3, value_sort/2, state/1, stop/0]).
 
 %% gen-server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
@@ -29,8 +29,8 @@ manual_sort(Game, PlayerNumber, NewOrder) ->
   gen_server_call(Game, {manual_sort, PlayerNumber, NewOrder}).
 value_sort(PlayerNumber, Game) ->
   gen_server_call(Game, {value_sort, PlayerNumber}).
-game_state(Game) ->
-  gen_server_call(Game, game_state).
+state(Game) ->
+  gen_server_call(Game, state).
 stop() ->
   gen_server_call(?MODULE, stop).
 
@@ -87,8 +87,8 @@ handle_call({value_sort, PlayerNumber}, _From, State) ->
 handle_call(crash, _From, _State) ->
   1/0;
 
-handle_call(game_state, _From, State) ->
-  {reply, {game_state, State}, State}.
+handle_call(state, _From, State) ->
+  {reply, {state, State}, State}.
 
 %%====================================================================
 %%% Internal functions

@@ -7,13 +7,13 @@ handle_request("start",[]) ->
   PlayerTwoName       = beepbeep_args:get_param("player_two_name",Env),
   {AtomicGameName, _} = game_server:start(PlayerOneName, PlayerTwoName),
   GameName            = atom_to_list(AtomicGameName),
-  {game_state, Game}  = game_server:game_state(GameName),
+  {state, Game}       = game_server:state(GameName),
   beepbeep_args:set_session_data(GameName, 1, Env),
   chat_server:subscribe(1, Game#game.chat_server),
   {redirect, lists:concat(["/game/", GameName])};
 
 handle_request(GameName, []) ->
-  {game_state, Game}     = game_server:game_state(GameName),
+  {state, Game}          = game_server:state(GameName),
   [PlayerOne, PlayerTwo] = Game#game.players,
 
   ViewData = case beepbeep_args:get_session_data(GameName, Env) of
@@ -46,7 +46,7 @@ handle_request(GameName, ["discard", CardName]) ->
 handle_request(GameName, ["knock"]) ->
   PlayerNumber         = beepbeep_args:get_session_data(GameName, Env),
   OpponentNumber       = if PlayerNumber == 1 -> 2; true -> 1 end,
-  {game_state, Game}   = game_server:game_state(GameName),
+  {state, Game}        = game_server:state(GameName),
   #player{ hand=Hand } = game:get_player(PlayerNumber, Game),
   ChatServer           = game:chat_server(Game),
   chat_server:direct_message(OpponentNumber, {knock, Hand}, ChatServer),
@@ -54,18 +54,18 @@ handle_request(GameName, ["knock"]) ->
 
 handle_request(GameName, ["comet"]) ->
   PlayerNumber       = beepbeep_args:get_session_data(GameName, Env),
-  {game_state, Game} = game_server:game_state(GameName),
+  {state, Game}      = game_server:state(GameName),
   chat_server:listen(PlayerNumber, self(), Game#game.chat_server),
   receive
     {messages, Messages} ->
       chat_server:unlisten(PlayerNumber, self(), Game#game.chat_server),
-      {game_state, NewGame} = game_server:game_state(GameName),
+      {state, NewGame} = game_server:state(GameName),
       {render, "game/comet.html", json_view_data(NewGame, PlayerNumber, Messages)}
   end;
 
 handle_request(GameName, ["broadcast"]) ->
   PlayerNumber       = beepbeep_args:get_session_data(GameName, Env),
-  {game_state, Game} = game_server:game_state(GameName),
+  {state, Game}      = game_server:state(GameName),
   Message            = beepbeep_args:get_param("message", Env),
   Player             = lists:nth(PlayerNumber, Game#game.players),
   FormattedMessage   = lists:concat([Player#player.name, " : ", Message]),
