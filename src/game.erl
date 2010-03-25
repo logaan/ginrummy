@@ -1,7 +1,7 @@
 -module(game).
 -include_lib("stdlib/include/qlc.hrl").
 -include("records.hrl").
--export([players/1, zones/1, chat_server/1]).
+-export([players/1, get_player/2, zones/1, chat_server/1]).
 -export([start_game/2, new_deck/0, library_draw/2, discard_draw/2, discard/3,
          manual_sort/3, value_sort/2, test/0]).
 

@@ -43,6 +43,15 @@ handle_request(GameName, ["discard", CardName]) ->
   {discard, _}   = game_server:discard(GameName, PlayerNumber, CardName),
   ajax_response(GameName);
 
+handle_request(GameName, ["knock"]) ->
+  PlayerNumber         = beepbeep_args:get_session_data(GameName, Env),
+  OpponentNumber       = if PlayerNumber == 1 -> 2; true -> 1 end,
+  {game_state, Game}   = game_server:game_state(GameName),
+  #player{ hand=Hand } = game:get_player(PlayerNumber, Game),
+  ChatServer           = game:chat_server(Game),
+  chat_server:direct_message(OpponentNumber, {knock, Hand}, ChatServer),
+  ajax_response(GameName);
+
 handle_request(GameName, ["comet"]) ->
   PlayerNumber       = beepbeep_args:get_session_data(GameName, Env),
   {game_state, Game} = game_server:game_state(GameName),
@@ -96,14 +105,21 @@ json_view_data(#game{ players=[PlayerOne, PlayerTwo], zones=Zones }, PlayerNumbe
     1 -> Player = PlayerOne, Opponent = PlayerTwo;
     2 -> Player = PlayerTwo, Opponent = PlayerOne
   end,
-  FormattedMessages = [ list_to_binary(M) || {chat, M} <- Messages],
+  ChatMessages = [ list_to_binary(M) || {chat, M} <- Messages],
+  OpponentHand = case lists:keysearch(knock, 1, Messages) of
+    {value, {knock, Hand}} ->
+      lists:map(fun(#card{ name=Name }) -> list_to_binary(Name) end, Hand);
+    false ->
+      []
+  end,
   Data = {struct, [
     {"player_size",     length(Player#player.hand)},
     {"player_hand",     card_list(Player)},
     {"opponent_size",   length(Opponent#player.hand)},
     {"deck_size",       length(Deck)},
     {"top_of_discard",  list_to_binary(top_of_discard(Discard))},
-    {"new_messages",    FormattedMessages}
+    {"new_messages",    ChatMessages},
+    {"opponent_hand",   OpponentHand}
   ]},
   [ {json, iolist_to_binary(mochijson2:encode(Data))} ] .
 
