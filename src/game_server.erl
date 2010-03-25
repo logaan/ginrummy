@@ -3,19 +3,22 @@
 -include("records.hrl").
 
 %% API
--export([start/2, library_draw/2, discard_draw/2, discard/3, manual_sort/3, value_sort/2, game_state/1, stop/0]).
+-export([start/1, start/2, library_draw/2, discard_draw/2, discard/3, manual_sort/3, value_sort/2, game_state/1, stop/0]).
 
 %% gen-server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
-
 %%====================================================================
 %% API
 %%====================================================================
+start(State = #game{ game_name=GameName }) ->
+  Result = gen_server:start_link({local, GameName}, ?MODULE, State, []),
+  io:format("Starting Result: ~p~n", [Result]),
+  {GameName, Result}.
 start(Player1Name, Player2Name) ->
   {new_id, Id} = id_server:new_id(),
   GameName = list_to_atom(lists:concat(["g", Id])),
-  {GameName, gen_server:start_link({local, GameName}, ?MODULE, [Player1Name, Player2Name], [])}.
+  {GameName, gen_server:start_link({local, GameName}, ?MODULE, [Player1Name, Player2Name, GameName], [])}.
 library_draw(Game, Player) ->
   gen_server_call(Game, {library_draw, Player}).
 discard_draw(Game, Player) ->
@@ -34,14 +37,20 @@ stop() ->
 %%====================================================================
 %% gen_server callbacks
 %%====================================================================
-init([Player1Name, Player2Name]) ->
-  {ok, game:start_game(Player1Name, Player2Name)}.
+init([Player1Name, Player2Name, GameName]) ->
+  {ok, game:start_game(Player1Name, Player2Name, GameName)};
+init(State) when is_record(State, game) ->
+  {ok, ChatServer} = chat_server:start_link(),
+  {ok, State#game{ chat_server=ChatServer }}.
 
 handle_cast(_Msg, State) -> {noreply, State}.
 
 handle_info(_Info, State) -> {noreply, State}.
 
-terminate(_Reason, _State) -> ok.
+terminate(_Reason, State) ->
+  io:format("restarting after crash~n"),
+  restarter:on_exit(fun(_,_) -> game_server:start(State) end, self()),
+  ok.
 
 code_change(_OldVsn, State, _Extra) -> {ok, State}.
 
@@ -74,6 +83,9 @@ handle_call({value_sort, PlayerNumber}, _From, State) ->
   NewState = game:value_sort(PlayerNumber, State),
   chat_server:refresh(PlayerNumber, NewState#game.chat_server),
   {reply, {value_sort, NewState}, NewState};
+
+handle_call(crash, _From, _State) ->
+  1/0;
 
 handle_call(game_state, _From, State) ->
   {reply, {game_state, State}, State}.

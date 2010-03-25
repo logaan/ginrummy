@@ -2,7 +2,7 @@
 -include_lib("stdlib/include/qlc.hrl").
 -include("records.hrl").
 -export([players/1, get_player/2, zones/1, chat_server/1]).
--export([start_game/2, new_deck/0, library_draw/2, discard_draw/2, discard/3,
+-export([start_game/3, new_deck/0, library_draw/2, discard_draw/2, discard/3,
          manual_sort/3, value_sort/2, test/0]).
 
 % Accessors
@@ -11,12 +11,12 @@ zones(#game{ zones=Zones }) -> Zones.
 chat_server(#game{ chat_server=ChatServer }) -> ChatServer.
 
 % Real API
-start_game(Player1Name, Player2Name) ->
+start_game(Player1Name, Player2Name, GameName) ->
   Zones = [{discard, []}, {deck, new_deck()}],
   Player1 = #player{ name = Player1Name },
   Player2 = #player{ name = Player2Name },
   {ok, ChatServer} = chat_server:start_link(),
-  #game{ players=[Player1, Player2], zones=Zones, chat_server=ChatServer }.
+  #game{ players=[Player1, Player2], zones=Zones, chat_server=ChatServer, game_name=GameName }.
 
 new_deck() ->
   shuffle_deck(generate_playing_cards()).
@@ -117,7 +117,7 @@ replace_property(NewProp={Key, _Value}, Proplist) ->
   [NewProp | proplists:delete(Key, Proplist)].
 
 test() ->
-  Game1 = start_game("foo", "bar"),
+  Game1 = start_game("foo", "bar", foo),
 
   Game2 = #game{players=[P11|_], zones=Zones1} = game:discard_draw(1, Game1),
   Discard1 = proplists:get_value(discard, Zones1),
