@@ -51,12 +51,7 @@ handle_request(GameName, ["comet"]) ->
     {messages, Messages} ->
       chat_server:unlisten(PlayerNumber, self(), Game#game.chat_server),
       {game_state, NewGame} = game_server:game_state(GameName),
-      ChatMessages = [ MessageText || {chat, MessageText} <- Messages],
-      {render, "game/comet.html", json_view_data(NewGame, PlayerNumber, ChatMessages)};
-    refresh ->
-      chat_server:unlisten(PlayerNumber, self(), Game#game.chat_server),
-      {game_state, NewGame} = game_server:game_state(GameName),
-      {render, "game/comet.html", json_view_data(NewGame, PlayerNumber, [])}
+      {render, "game/comet.html", json_view_data(NewGame, PlayerNumber, Messages)}
   end;
 
 handle_request(GameName, ["broadcast"]) ->
@@ -76,7 +71,8 @@ handle_request(GameName, ["manual_sort"]) ->
   ajax_response(GameName);
 
 handle_request(GameName, ["value_sort"]) ->
-  game_server:value_sort(GameName),
+  PlayerNumber = beepbeep_args:get_session_data(GameName, Env),
+  game_server:value_sort(PlayerNumber, GameName),
   ajax_response(GameName).
 
 html_view_data(#game{zones=Zones}, CurrentPlayer, Opponent) ->
@@ -100,7 +96,7 @@ json_view_data(#game{ players=[PlayerOne, PlayerTwo], zones=Zones }, PlayerNumbe
     1 -> Player = PlayerOne, Opponent = PlayerTwo;
     2 -> Player = PlayerTwo, Opponent = PlayerOne
   end,
-  FormattedMessages = lists:map(fun(M) -> list_to_binary(M) end, Messages),
+  FormattedMessages = [ list_to_binary(M) || {chat, M} <- Messages],
   Data = {struct, [
     {"player_size",     length(Player#player.hand)},
     {"player_hand",     card_list(Player)},

@@ -1,8 +1,16 @@
 -module(game).
 -include_lib("stdlib/include/qlc.hrl").
 -include("records.hrl").
--export([start_game/2, new_deck/0, library_draw/2, discard_draw/2, discard/3, manual_sort/3, value_sort/1, test/0]).
+-export([players/1, zones/1, chat_server/1]).
+-export([start_game/2, new_deck/0, library_draw/2, discard_draw/2, discard/3,
+         manual_sort/3, value_sort/1, test/0]).
 
+% Accessors
+players(#game{ players=Players }) -> Players.
+zones(#game{ zones=Zones }) -> Zones.
+chat_server(#game{ chat_server=ChatServer }) -> ChatServer.
+
+% Real API
 start_game(Player1Name, Player2Name) ->
   Zones = [{discard, []}, {deck, new_deck()}],
   Player1 = #player{ name = Player1Name },
