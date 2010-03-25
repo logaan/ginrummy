@@ -29,6 +29,11 @@ jQuery(function() {
     return false;
   });
 
+  $("#knock").click(function() {
+    jQuery.getJSON(game_path + "/knock");
+    return false;
+  });
+
   $("#chat form").submit(function() {
     jQuery.post(
       game_path + "/broadcast",
