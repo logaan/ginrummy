@@ -71,7 +71,7 @@ handle_call({manual_sort, PlayerNumber, NewOrder}, _From, State) ->
   {reply, {manual_sort, NewState}, NewState};
 
 handle_call({value_sort, PlayerNumber}, _From, State) ->
-  NewState = game:value_sort(State),
+  NewState = game:value_sort(PlayerNumber, State),
   chat_server:refresh(PlayerNumber, NewState#game.chat_server),
   {reply, {value_sort, NewState}, NewState};
 

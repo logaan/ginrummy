@@ -3,7 +3,7 @@
 -include("records.hrl").
 -export([players/1, zones/1, chat_server/1]).
 -export([start_game/2, new_deck/0, library_draw/2, discard_draw/2, discard/3,
-         manual_sort/3, value_sort/1, test/0]).
+         manual_sort/3, value_sort/2, test/0]).
 
 % Accessors
 players(#game{ players=Players }) -> Players.
@@ -99,20 +99,14 @@ manual_sort(PlayerNumber, NewOrder, Game) ->
 get_player(Number, #game{players=Players}) ->
   lists:nth(Number, Players).
 
-value_sort(Game = #game{ players=[PlayerOne, PlayerTwo] }) ->
+value_sort(PlayerNumber, Game) ->
+  Player = get_player(PlayerNumber, Game),
+  Hand = Player#player.hand,
   CardCompare = fun(#card{properties=Prop1}, #card{properties=Prop2}) ->
     proplists:get_value(value, Prop1) > proplists:get_value(value, Prop2)
   end,
-  Player1Hand = PlayerOne#player.hand,
-  Player2Hand = PlayerTwo#player.hand,
-  NewPlayer1Hand = lists:sort(CardCompare, Player1Hand),
-  NewPlayer2Hand = lists:sort(CardCompare, Player2Hand),
-  Game#game{
-    players=[
-      PlayerOne#player{ hand=NewPlayer1Hand },
-      PlayerTwo#player{ hand=NewPlayer2Hand }
-    ]
-  }.
+  NewHand = lists:sort(CardCompare, Hand),
+  replace_player(PlayerNumber, Player#player{ hand=NewHand }, Game).
   
 replace_player(Number, Player, Game = #game{ players=Players }) ->
   {Head, [_OldPlayer|Tail]} = lists:split(Number - 1, Players),
