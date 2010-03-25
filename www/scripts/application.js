@@ -135,6 +135,7 @@ function update_page(data) {
   }
   update_card_list(data.player_hand);
   add_new_messages(data.new_messages);
+  display_opponent_hand(data.opponent_hand);
 
   return true;
 };
@@ -170,5 +171,21 @@ function add_new_messages(new_messages) {
     var chat_list = $("#chat ul");
     chat_list.attr("scrollTop", chat_list.attr("scrollHeight"));
   };
+}
+
+function display_opponent_hand(hand) {
+  if( hand.length == 0 ) {
+    return false;
+  } else {
+    var opponent_hand = document.createElement("ul");
+    $(opponent_hand).attr("title", "Your opponent's hand");
+    $(hand).map(function(index, card_name) {
+      var list_element = document.createElement("li");
+      $(list_element).text(card_name);
+      $(opponent_hand).append(list_element);
+    });
+
+    $(opponent_hand).dialog({ modal: true });
+  }
 }
 
