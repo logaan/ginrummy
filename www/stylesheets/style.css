@@ -91,7 +91,7 @@ ul.sort li.selected.none a {background-position:-121px -22px;color:#b4df00;}
 #chat-container h2 {background:url(../images/pad/header.png) no-repeat 0 0;width:370px;display:block;overflow:hidden;text-indent:-999px;height:45px;position:absolute;left:5px;top:4px;}
 #chat-container #chat {position:absolute;left:5px;top:50px;height:185px;overflow:hidden;padding:0 10px;background:url(../images/pad/background-vertical-repeat.png) repeat-y 0 0;width:345px;}
 #chat-container #chat #scroller {height:185px;}
-#chat-container #chat #scroller ul {}
+#chat-container #chat #scroller ul {padding: 10px 0 0 0;}
 #chat-container #chat #scroller ul li {line-height:29px;border-bottom:1px solid #dcd7c3;color:#615a40;margin:0 20px;padding:0 5px;font-size:1.2em;}
 #chat-container .pad-bottom {height:15px;width:370px;background:url(../images/pad/bottom.png) no-repeat 0 bottom;position:absolute;bottom:48px;left:5px;}
 #chat-container .tear {background:url(../images/pad/torn-paper.png) repeat-y 0 0;width:370px;height:20px;position:absolute;left:5px;top:50px;z-index:100;}

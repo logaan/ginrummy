@@ -34,14 +34,14 @@ jQuery(function() {
     return false;
   });
 
-  $("#chat form").submit(function() {
+  $("#chat-container form").submit(function() {
     jQuery.post(
       game_path + "/broadcast",
-      { message: $("#message").val() },
+      { message: $("#chat-field").val() },
       function() {  },
       "json"
     );
-    $("#message").val("").focus();
+    $("#chat-field").val("").focus();
     return false;
   });
 
@@ -77,7 +77,7 @@ jQuery(function() {
           }
           break;
 
-        default: 
+        default:
           if( e.which >= 48 && e.which <= 57 ) { // 0 to 9
             // Add the number onto the multiplier. So if you hit
             // 1 then 0 then 8 the multiplier would be 108.
@@ -126,7 +126,7 @@ jQuery(function() {
     revert: "invalid"
   });
 
-  // 
+  //
   // Longpoll comet
   // failed connections keeps track of how many times the comet request fails
   // each fail slows down the comet request by another 400ms and then tries
@@ -195,8 +195,12 @@ function add_new_messages(new_messages) {
     $(list_element).text(new_messages[i]);
     $("#chat_messages").append(list_element);
 
-    var chat_list = $("#chat ul");
-    chat_list.attr("scrollTop", chat_list.attr("scrollHeight"));
+    // Reload the scroller and point it at the bottom
+    var chat_list = $("#scroller");
+    chat_list.jScrollPane();
+    if(chat_list[0].scrollTo != undefined) {
+      chat_list[0].scrollTo(chat_list.attr("scrollHeight"));
+    };
   };
 }
 
@@ -230,15 +234,18 @@ function display_opponent_hand(hand) {
 // Zak added....
 
 $(function(){
+  var chat_list = $("#scroller");
+  chat_list.jScrollPane();
+  if(chat_list[0].scrollTo != undefined) {
+    chat_list[0].scrollTo(chat_list.attr("scrollHeight"));
+  };
 
-	$('#scroller').jScrollPane({animateTo: true});
+  $('#information-icon').click(function(){
+    $('#information').toggle();
+  });
 
-	$('#information-icon').click(function(){
-		$('#information').toggle();
-    });
-    
-    $('.colorbox').colorbox();	
+  $('.colorbox').colorbox();
 });
-  			
-				
-				
+
+
+

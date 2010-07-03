@@ -1,10 +1,192 @@
 {% extends "../base.html" %}
 
-{% block javascript %}
-<script src="/scripts/application.js" type="text/javascript"></script>
-{% endblock %}
-
 {% block content %}
+<div id="chat-container">
+
+  <h2>Our Chat</h2>
+
+  <div id="chat">
+
+    <div id="scroller">
+
+      <ul id="chat_messages">
+        <li>{{ player_two_name }} can join the game by visiting:<br />http://localhost:8000/game/{{ game_name }}</li>
+      </ul>
+
+    </div>
+
+  </div>
+
+  <div class="pad-bottom"></div>
+
+  <div class="tear"></div>
+
+  <form action="/game/{{ game_name }}/broadcast" method="post">
+    <input type="text" name="message" id="chat-field" />
+    <button>send</button>
+  </form>
+
+</div>
+
+
+<div id="their-hand">
+
+  <h2>Their Hand</h2>
+
+  <ul class="cards">
+
+    <li class="back"><a href="">Unknown</a></li>
+    <li class="back"><a href="">Unknown</a></li>
+    <li class="back"><a href="">Unknown</a></li>
+    <li class="back"><a href="">Unknown</a></li>
+    <li class="back"><a href="">Unknown</a></li>
+    <li class="back"><a href="">Unknown</a></li>
+    <li class="back"><a href="">Unknown</a></li>
+    <li class="back"><a href="">Unknown</a></li>
+    <li class="back"><a href="">Unknown</a></li>
+    <li class="back"><a href="">Unknown</a></li>
+    <li class="empty"><a href="">Empty Space</a></li>
+
+  </ul>
+
+</div>
+
+
+<div id="common-cards">
+
+  <div id="deck">
+
+    <a href="">Unknown</a>
+    <h2>Deck</h2>
+    <span class="remaining">32 Remaining</span>
+
+  </div>
+
+  <div id="discard">
+
+    <a href="" class="king hearts">
+      <span class="value">one</span>
+      <span class="suit">hearts</span>
+    </a>
+
+    <h2>Deck</h2>
+
+    <span class="remaining">32 Remaining</span>
+
+  </div>
+
+
+</div>
+
+
+<div id="your-hand">
+
+  <h2>Your Hand</h2>
+
+  <ul class="sort">
+
+    <li class="value selected"><a href="">value</a></li>
+    <li class="suit"><a href="">suit</a></li>
+    <li class="none"><a href="">none</a></li>
+
+  </ul>
+
+  <ul class="cards">
+
+    <li class="face one hearts">
+      <a href="">
+        <span class="value">1</span>
+        <span class="suit">hearts</span>
+      </a>
+    </li>
+
+    <li class="face two diamonds">
+      <a href="">
+        <span class="value">2</span>
+        <span class="suit">diamonds</span>
+      </a>
+    </li>
+
+    <li class="face three clubs">
+      <a href="">
+        <span class="value">3</span>
+        <span class="suit">clubs</span>
+      </a>
+    </li>
+
+    <li class="face four hearts">
+      <a href="">
+        <span class="value">4</span>
+        <span class="suit">hearts</span>
+      </a>
+    </li>
+
+    <li class="face five spades">
+      <a href="">
+        <span class="value">5</span>
+        <span class="suit">spades</span>
+      </a>
+    </li>
+
+    <li class="face six diamonds">
+      <a href="">
+        <span class="value">6</span>
+        <span class="suit">diamonds</span>
+      </a>
+    </li>
+
+    <li class="face seven clubs">
+      <a href="">
+        <span class="value">7</span>
+        <span class="suit">clubs</span>
+      </a>
+    </li>
+
+    <li class="face eight hearts">
+      <a href="">
+        <span class="value">8</span>
+        <span class="suit">hearts</span>
+      </a>
+    </li>
+
+    <li class="face nine spades">
+      <a href="">
+        <span class="value">9</span>
+        <span class="suit">spades</span>
+      </a>
+    </li>
+
+    <li class="face ten diamonds">
+      <a href="">
+        <span class="value">10</span>
+        <span class="suit">diamonds</span>
+      </a>
+    </li>
+
+    <li class="empty"><a href="">Empty Space</a></li>
+
+  </ul>
+
+</div>
+
+<div id="reveal-all">
+
+  <a href="">Reveal All</a>
+
+</div>
+
+<!--a id="information-icon">Information</a>
+
+<div id="information">
+
+  <h2>Information</h2>
+
+  <p>Vivamus molestie feugiat risus at imperdiet. Curabitur nunc erat, imperdiet a consectetur sit amet, lobortis at purus. Donec rhoncus molestie semper. Proin posuere bibendum convallis. Integer elementum odio eu sem suscipit a fringilla libero consectetur. Morbi pharetra ante a enim suscipit gravida. Maecenas non posuere erat. Cras molestie commodo sollicitudin. Nam tortor sem, laoreet eu tristique in, semper vitae tellus. Integer congue urna in augue varius condimentum. </p>
+  <p>Vivamus molestie feugiat risus at imperdiet. Curabitur nunc erat, imperdiet a consectetur sit amet, lobortis at purus. Donec rhoncus molestie semper. Proin posuere bibendum convallis. Integer elementum odio eu sem suscipit a fringilla libero consectetur. Morbi pharetra ante a enim suscipit gravida. Maecenas non posuere erat. Cras molestie commodo sollicitudin. Nam tortor sem, laoreet eu tristique in, semper vitae tellus. Integer congue urna in augue varius condimentum. </p>
+
+</div-->
+
+<!--
 <h1>Game between you and {{ player_two_name }}</h1>
 <p>
   {{ player_two_name }} can join the game by visiting:<br />
@@ -69,5 +251,6 @@
   <p>You can draw from the library by pressing CTRL+l. Or from the discard pile by pressing CTRL+d. You can prefix these commands with digits to multiply the number of times they happen. Hitting escape will clear the digits. For example you could type "3, ESC, 1, 0, CTRL+l" to draw 10 cards from the library. But only if you don't have the text box selected.</p>
 
 </div>
+-->
 
 {% endblock %}
