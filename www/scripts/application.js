@@ -98,7 +98,11 @@ jQuery(function() {
     // });
 
     $("#player_cards").sortable({
+      receive: function(event, ui) {
+        console.log("received an element from ", ui.sender.attr("id"));
+      },
       update: function(event, ui) {
+        console.log("some card moved around from", event.originalTarget);
         var card_names = $("#player_cards a").map(function(i, e){
           return $(e).text();
         });
@@ -113,6 +117,14 @@ jQuery(function() {
     });
   }
   apply_sort();
+
+  //
+  // Dragging
+  $("#library").draggable({
+    connectToSortable: "#player_cards",
+    helper: "clone",
+    revert: "invalid"
+  });
 
   // 
   // Longpoll comet
@@ -200,7 +212,33 @@ function display_opponent_hand(hand) {
       $(opponent_hand).append(list_element);
     });
 
-    $(opponent_hand).dialog({ modal: true });
+    $(opponent_hand).dialog();
   }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+// Zak added....
+
+$(function(){
+
+	$('#scroller').jScrollPane({animateTo: true});
+
+	$('#information-icon').click(function(){
+		$('#information').toggle();
+    });
+    
+    $('.colorbox').colorbox();	
+});
+  			
+				
+				

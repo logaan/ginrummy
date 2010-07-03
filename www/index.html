@@ -1,0 +1,249 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0028)http://10.1.1.2:8000/game/g5 -->
+<HTML xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><HEAD><META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <!--meta name = "viewport" content = "user-scalable=no, width=1000px"-->
+  <link rel="apple-touch-icon" href="images/touch-icon.png"/>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <link rel="apple-touch-startup-image" href="images/startup.png">
+
+    <title>Gin Rummy!</title>
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/reset.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/jquery-ui-1.8.custom.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/jScrollPane.css" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/colorbox.css" />
+
+    <script type="text/javascript" src="scripts/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="scripts/jquery-ui-1.8.custom.min.js"></script>
+    <script type="text/javascript" src="scripts/json2.js"></script>
+    <script type="text/javascript" src="scripts/jquery.mousewheel.js"></script>
+    <script type="text/javascript" src="scripts/jScrollPane-1.2.3.js"></script>
+    <script type="text/javascript" src="scripts/jquery.colorbox.js"></script>
+    <script type="text/javascript" src="scripts/application.js"></script>
+
+  </head>
+
+  <body>
+
+  <div id="header-container">
+    <div id="header">
+      <span>View <a href="instructions.html" class="colorbox">instructions</a> on how to play</span>
+      <span>Start a <a href="">New Game</a> with Colin</span>
+      <span>Start a new game in a <a href="">New Window</a></span>
+    </div>
+  </div>
+
+  <div id="logo">
+
+    <img src="images/core/logo.png" alt="Gin Rummy!" />
+
+  </div>
+
+  <div id="content-container">
+
+
+    <div id="content">
+
+      <div id="chat-container">
+
+        <h2>Our Chat</h2>
+
+        <div id="chat">
+
+          <div id="scroller">
+
+            <ul>
+
+              <li>Colin is a Clown</li>
+              <li>Colin is a Clown</li>
+              <li>Colin is a Clown</li>
+              <li>Colin is a Clown</li>
+              <li>Colin is a Clown</li>
+              <li>Colin is a Clown</li>
+              <li>Colin is a Clown</li>
+              <li>Colin is a Clown</li>
+              <li>Colin is a Clown</li>
+
+            </ul>
+
+          </div>
+
+        </div>
+
+        <div class="pad-bottom"></div>
+
+        <div class="tear"></div>
+
+        <input id="chat-field" type="" value="" />
+
+        <button>send</button>
+
+      </div>
+
+
+      <div id="their-hand">
+
+        <h2>Their Hand</h2>
+
+        <ul class="cards">
+
+          <li class="back"><a href="">Unknown</a></li>
+          <li class="back"><a href="">Unknown</a></li>
+          <li class="back"><a href="">Unknown</a></li>
+          <li class="back"><a href="">Unknown</a></li>
+          <li class="back"><a href="">Unknown</a></li>
+          <li class="back"><a href="">Unknown</a></li>
+          <li class="back"><a href="">Unknown</a></li>
+          <li class="back"><a href="">Unknown</a></li>
+          <li class="back"><a href="">Unknown</a></li>
+          <li class="back"><a href="">Unknown</a></li>
+          <li class="empty"><a href="">Empty Space</a></li>
+
+        </ul>
+
+      </div>
+
+
+      <div id="common-cards">
+
+        <div id="deck">
+
+          <a href="">Unknown</a>
+          <h2>Deck</h2>
+          <span class="remaining">32 Remaining</span>
+
+        </div>
+
+        <div id="discard">
+
+          <a href="" class="king hearts">
+            <span class="value">one</span>
+            <span class="suit">hearts</span>
+          </a>
+
+          <h2>Deck</h2>
+
+          <span class="remaining">32 Remaining</span>
+
+        </div>
+
+
+      </div>
+
+
+      <div id="your-hand">
+
+        <h2>Your Hand</h2>
+
+        <ul class="sort">
+
+          <li class="value selected"><a href="">value</a></li>
+          <li class="suit"><a href="">suit</a></li>
+          <li class="none"><a href="">none</a></li>
+
+        </ul>
+
+        <ul class="cards">
+
+          <li class="face one hearts">
+            <a href="">
+              <span class="value">1</span>
+              <span class="suit">hearts</span>
+            </a>
+          </li>
+
+          <li class="face two diamonds">
+            <a href="">
+              <span class="value">2</span>
+              <span class="suit">diamonds</span>
+            </a>
+          </li>
+
+          <li class="face three clubs">
+            <a href="">
+              <span class="value">3</span>
+              <span class="suit">clubs</span>
+            </a>
+          </li>
+
+          <li class="face four hearts">
+            <a href="">
+              <span class="value">4</span>
+              <span class="suit">hearts</span>
+            </a>
+          </li>
+
+          <li class="face five spades">
+            <a href="">
+              <span class="value">5</span>
+              <span class="suit">spades</span>
+            </a>
+          </li>
+
+          <li class="face six diamonds">
+            <a href="">
+              <span class="value">6</span>
+              <span class="suit">diamonds</span>
+            </a>
+          </li>
+
+          <li class="face seven clubs">
+            <a href="">
+              <span class="value">7</span>
+              <span class="suit">clubs</span>
+            </a>
+          </li>
+
+          <li class="face eight hearts">
+            <a href="">
+              <span class="value">8</span>
+              <span class="suit">hearts</span>
+            </a>
+          </li>
+
+          <li class="face nine spades">
+            <a href="">
+              <span class="value">9</span>
+              <span class="suit">spades</span>
+            </a>
+          </li>
+
+          <li class="face ten diamonds">
+            <a href="">
+              <span class="value">10</span>
+              <span class="suit">diamonds</span>
+            </a>
+          </li>
+
+          <li class="empty"><a href="">Empty Space</a></li>
+
+        </ul>
+
+      </div>
+
+      <div id="reveal-all">
+
+        <a href="">Reveal All</a>
+
+      </div>
+
+      <!--a id="information-icon">Information</a>
+
+      <div id="information">
+
+        <h2>Information</h2>
+
+        <p>Vivamus molestie feugiat risus at imperdiet. Curabitur nunc erat, imperdiet a consectetur sit amet, lobortis at purus. Donec rhoncus molestie semper. Proin posuere bibendum convallis. Integer elementum odio eu sem suscipit a fringilla libero consectetur. Morbi pharetra ante a enim suscipit gravida. Maecenas non posuere erat. Cras molestie commodo sollicitudin. Nam tortor sem, laoreet eu tristique in, semper vitae tellus. Integer congue urna in augue varius condimentum. </p>
+        <p>Vivamus molestie feugiat risus at imperdiet. Curabitur nunc erat, imperdiet a consectetur sit amet, lobortis at purus. Donec rhoncus molestie semper. Proin posuere bibendum convallis. Integer elementum odio eu sem suscipit a fringilla libero consectetur. Morbi pharetra ante a enim suscipit gravida. Maecenas non posuere erat. Cras molestie commodo sollicitudin. Nam tortor sem, laoreet eu tristique in, semper vitae tellus. Integer congue urna in augue varius condimentum. </p>
+
+      </div-->
+
+    </div>
+
+  </div>
+
+
+</body>
+</html>

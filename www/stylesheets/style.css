@@ -1,14 +1,114 @@
-body { background-color: #fff; color: #333; font-family: verdana, arial, helvetica, sans-serif; font-size:   13px; margin-left: 50px; margin-top: 50px; margin-right: 200px; }
-h1 { display: block; font-size: 2em; font-weight: bold; margin: 0.67em 0px 0.67em 0px; }
-h2 { display: block; font-size: 1.5em; font-weight: bold; margin: 0.83em 0px 0.83em 0px; }
-h3 { display: block; font-size: 1em; margin: 0.7em 0px 0px 0px; }
-dd { margin: 0px 0px 0px 1em; }
+body { background:url(../images/core/main-background.gif) no-repeat center 0, url(../images/core/repeat.gif) repeat center 0;font:normal 62.5%/20px arial; }
 
-.verticle { display: block; }
-#main { position: relative; }
-#chat { position: absolute; right: 0px; top: 0px; width: 30em; height: 23em; border: 2px dashed #000; padding: 0.5em; }
-#chat ul { height: 18em; overflow-y: scroll; }
-#chat h2 { margin: 0px 0px 0.83em 0px; }
-#chat form { position: absolute; bottom: 0.5em; }
-#player_cards { display: block; list-style-type: disc; margin: 1em 0px 1em 0px; }
-#player_cards li { display: list-item; margin: 0px 0px 0px 1em; }
+#header-container {background:#000;background:rgba(0,0,0,0.2);}
+#header {line-height:40px;color:#f0d387;font-size:1.2em;width:960px;margin:0 auto;text-align:right;}
+#header span {margin:0 20px 0 0;}
+#header a {color:#f0d387;text-transform:uppercase;}
+
+#logo {width:960px;margin:0 auto;padding:10px 0;}
+
+#content-container {}
+#content {margin:0 auto;width:960px;}
+
+#their-hand, #your-hand {background:rgba(0,0,0,0.2);height:98px;width:560px;border-radius:10px;-moz-border-radius:10px;border-bottom:1px solid rgba(255,255,255,0.1);border-top:1px solid rgba(0,0,0,0.2);}
+
+#their-hand h2, #your-hand h2 {height:20px;overflow:hidden;text-indent:-999px;margin:10px 10px 5px;}
+#their-hand h2 {background:url(../images/titles/their-hand.png) no-repeat 0 0;width:145px;}
+#your-hand h2 {background:url(../images/titles/your-hand.png) no-repeat 0 0;width:135px;float:left;}
+
+ul.cards {margin:0 0 0 5px;clear:left;}
+ul.cards li a {width:50px;height:60px;display:block;float:left;}
+ul.cards li.face a {background:url(../images/cards/front.png) no-repeat 0 0;position:relative;}
+ul.cards li.back a {background:url(../images/cards/back.png) no-repeat 0 0;overflow:hidden;text-indent:-999px;}
+ul.cards li.empty a {background:url(../images/cards/no-card.png) no-repeat 0 0;overflow:hidden;text-indent:-999px;}
+
+ul.cards li.face a span {overflow:hidden;text-indent:-999px;display:block;position:absolute;height:20px;width:20px;}
+
+/* suits */
+ul.cards li a span.suit, #discard a span.suit {right:10px;bottom:10px;}
+ul.cards li.hearts a span.suit, #discard a.hearts span.suit {background:url(../images/cards/hearts.png) no-repeat 0 0;}
+ul.cards li.spades a span.suit, #discard a.spades span.suit {background:url(../images/cards/spades.png) no-repeat 0 0;}
+ul.cards li.diamonds a span.suit, #discard a.diamonds span.suit {background:url(../images/cards/diamonds.png) no-repeat 0 0;}
+ul.cards li.clubs a span.suit, #discard a.clubs span.suit {background:url(../images/cards/clubs.png) no-repeat 0 0;}
+
+/* values */
+ul.cards li a span.value, #discard a span.value {left:10px;top:10px;}
+
+ul.cards li.one a span.value, #discard a.one span.value {background:url(../images/cards/1.png) no-repeat 0 0;}
+ul.cards li.two a span.value, #discard a.two span.value {background:url(../images/cards/2.png) no-repeat 0 0;}
+ul.cards li.three a span.value, #discard a.three span.value {background:url(../images/cards/3.png) no-repeat 0 0;}
+ul.cards li.four a span.value, #discard a.four span.value {background:url(../images/cards/4.png) no-repeat 0 0;}
+ul.cards li.five a span.value, #discard a.five span.value {background:url(../images/cards/5.png) no-repeat 0 0;}
+ul.cards li.six a span.value, #discard a.six span.value {background:url(../images/cards/6.png) no-repeat 0 0;}
+ul.cards li.seven a span.value, #discard a.seven span.value {background:url(../images/cards/7.png) no-repeat 0 0;}
+ul.cards li.eight a span.value, #discard a.eight span.value {background:url(../images/cards/8.png) no-repeat 0 0;}
+ul.cards li.nine a span.value, #discard a.nine span.value {background:url(../images/cards/9.png) no-repeat 0 0;}
+ul.cards li.ten a span.value, #discard a.ten span.value {background:url(../images/cards/10.png) no-repeat 0 0;}
+ul.cards li.jack a span.value, #discard a.jack span.value {background:url(../images/cards/J.png) no-repeat 0 0;}
+ul.cards li.queen a span.value, #discard a.queen span.value {background:url(../images/cards/Q.png) no-repeat 0 0;}
+ul.cards li.king a span.value, #discard a.king span.value {background:url(../images/cards/K.png) no-repeat 0 0;}
+ul.cards li.ace a span.value, #discard a.ace span.value {background:url(../images/cards/A.png) no-repeat 0 0;}
+
+
+#common-cards {position:relative;height:100px;}
+
+#deck h2, #deck span, #deck a, #discard h2, #discard span, #discard a {position:absolute;}
+
+#deck a {width:50px;height:60px;overflow:hidden;text-indent:-999px;background:url(../images/cards/back.png) no-repeat 0 0;display:block;top:20px;left:5px;}
+
+#deck h2 {left:60px;top:30px;background:url(../images/titles/deck.png) no-repeat 0 0;width:60px;overflow:hidden;text-indent:-999px;}
+
+#deck span {left:60px;top:50px;font-size:1.2em;color:#f0d387;}
+
+
+
+#discard a.empty {overflow:hidden;text-indent:-999px;background:url(../images/cards/no-card.png) no-repeat 0 0;}
+
+#discard span.remaining {left:310px;top:50px;font-size:1.2em;color:#f0d387;}
+
+#discard a {background:url(../images/cards/front.png) no-repeat 0 0;display:block;top:20px;left:255px;width:50px;height:60px; }
+
+#discard a span {width:20px;height:20px;display:block;overflow:hidden;text-indent:-999px;position:absolute;}
+
+#discard h2 {left:310px;top:30px;background:url(../images/titles/discard-pile.png) no-repeat 0 0;width:160px;overflow:hidden;text-indent:-999px;}
+
+
+
+ul.sort {width:182px;height:22px;float:right;margin:5px 5px 0 0;}
+ul.sort li {float:left;}
+ul.sort li a {display:block;height:22px;text-align:center;line-height:22px;text-decoration:none;font-size:1.1em;color:#000;text-shadow:0 1px 1px rgba(255,255,255,0.2);}
+ul.sort li.value a {width:61px;background:url(../images/core/sort.png) no-repeat 0 0;}
+ul.sort li.suit a {width:60px;background:url(../images/core/sort.png) no-repeat -61px 0;}
+ul.sort li.none a {width:61px;background:url(../images/core/sort.png) no-repeat -121px 0;}
+ul.sort li.selected.value a {background-position:0px -22px;color:#b4df00;}
+ul.sort li.selected.suit a {background-position:-61px -22px;color:#b4df00;}
+ul.sort li.selected.none a {background-position:-121px -22px;color:#b4df00;}
+
+
+/* chat */
+
+#chat-container {width:380px;height:298px;float:right;background:rgba(0,0,0,0.2);border-radius:10px;-moz-border-radius:10px;border-bottom:1px solid rgba(255,255,255,0.1);border-top:1px solid rgba(0,0,0,0.2);position:relative;}
+#chat-container h2 {background:url(../images/pad/header.png) no-repeat 0 0;width:370px;display:block;overflow:hidden;text-indent:-999px;height:45px;position:absolute;left:5px;top:4px;}
+#chat-container #chat {position:absolute;left:5px;top:50px;height:185px;overflow:hidden;padding:0 10px;background:url(../images/pad/background-vertical-repeat.png) repeat-y 0 0;width:345px;}
+#chat-container #chat #scroller {height:185px;}
+#chat-container #chat #scroller ul {}
+#chat-container #chat #scroller ul li {line-height:29px;border-bottom:1px solid #dcd7c3;color:#615a40;margin:0 20px;padding:0 5px;font-size:1.2em;}
+#chat-container .pad-bottom {height:15px;width:370px;background:url(../images/pad/bottom.png) no-repeat 0 bottom;position:absolute;bottom:48px;left:5px;}
+#chat-container .tear {background:url(../images/pad/torn-paper.png) repeat-y 0 0;width:370px;height:20px;position:absolute;left:5px;top:50px;z-index:100;}
+#chat-container input {height:29px;border-radius:5px;-moz-border-radius:5px;background:#f3edd5;border:none;width:270px;position:absolute;left:10px;bottom:10px;padding:0 5px;}
+#chat-container button {width:80px;height:40px;background:url(../images/buttons/send.png) no-repeat 0 0;border:none;position:absolute;bottom:1px;right:4px;overflow:hidden;text-indent:-999px;cursor:pointer;}
+#chat-container button:hover {background-position:0 -40px;}
+
+
+
+#reveal-all {padding:30px 0 20px;}
+#reveal-all a {background:url(../images/buttons/reveal-hand.png) no-repeat 0 0;width:260px;height:60px;display:block;overflow:hidden;text-indent:-999px;margin:0 auto;}
+#reveal-all a:hover {background-position:0 -60px;}
+
+
+a#information-icon {background:url(../images/core/icon-info.png) no-repeat 0 0;width:70px;height:70px;overflow:hidden;text-indent:-999px;display:block;margin:0 auto -35px;z-index:101;position: relative;cursor:pointer;}
+#information {border-radius:10px;-moz-border-radius:10px;width:878px;padding:40px 40px 20px;margin:0 0 40px;text-align:center;color:#44390e;font-size:1.2em;border-top:1px solid #faeccc;border-bottom:1px solid #908059;border-right:1px solid #e3bc5f;border-left:1px solid #e3bc5f;position:relative;background:#efc562 url(../images/core/info-box-bg.jpg) no-repeat center center;display:none;}
+#information p {margin:10px 0;}
+#information h2 {background:url(../images/titles/instructions.png) no-repeat 0 0;width:156px;height:22px;overflow:hidden;text-indent:-999px;margin:0 auto 10px;display:block;}
+
+
