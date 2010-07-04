@@ -3,6 +3,21 @@ jQuery(function() {
   var game_path = window.location.pathname;
 
   //
+  // Chat and Log
+  $("#chat-field").focus();
+  var chat_list = $("#scroller");
+  chat_list.jScrollPane();
+  if(chat_list[0].scrollTo != undefined) {
+    chat_list[0].scrollTo(chat_list.attr("scrollHeight"));
+  };
+
+  $('#information-icon').click(function(){
+    $('#information').toggle();
+  });
+
+  $('.colorbox').colorbox();
+
+  //
   // Click behaviors
   function discard_draw() {
     jQuery.getJSON(game_path + "/discard_draw");
@@ -46,48 +61,6 @@ jQuery(function() {
   });
 
   //
-  // Keyboard behavior
-  function multiplier_times_do(func) {
-    func();
-    for(var i = 1; i < key_multiplier; i++) {
-      func();
-    }
-    key_multiplier = 0;
-  }
-
-  $(document).keypress(function(e) {
-    if( ($(e.currentTarget.activeElement).attr("nodeName") != "INPUT") ) {
-      switch( e.which ) {
-        case 0: // escape
-          key_multiplier = 0;
-          e.preventDefault();
-          break;
-
-        case 100: // lower case d
-          if( e.ctrlKey ) {
-            multiplier_times_do(function() { discard_draw(); });
-            e.preventDefault();
-          }
-          break;
-
-        case 108: // lower case l
-          if( e.ctrlKey ) {
-            multiplier_times_do(function() { library_draw(); });
-            e.preventDefault();
-          }
-          break;
-
-        default:
-          if( e.which >= 48 && e.which <= 57 ) { // 0 to 9
-            // Add the number onto the multiplier. So if you hit
-            // 1 then 0 then 8 the multiplier would be 108.
-            key_multiplier = key_multiplier * 10 + e.which - 48;
-          };
-      }
-    }
-  });
-
-  //
   // Sorting
   function apply_sort() {
     // $("#player_cards li").draggable();
@@ -119,14 +92,6 @@ jQuery(function() {
   apply_sort();
 
   //
-  // Dragging
-  $("#library").draggable({
-    connectToSortable: "#player_cards",
-    helper: "clone",
-    revert: "invalid"
-  });
-
-  //
   // Longpoll comet
   // failed connections keeps track of how many times the comet request fails
   // each fail slows down the comet request by another 400ms and then tries
@@ -153,7 +118,7 @@ jQuery(function() {
 
 function update_page(data) {
   $("#deck_size").text(data.deck_size);
-  $("#opponent_size").text(data.opponent_size);
+  draw_opponent_hand(data.opponent_size);
   $("#player_size").text(data.player_size);
   if (data.top_of_discard == "") {
     $("#discard").text("Empty")
@@ -189,6 +154,7 @@ function update_card_list(cards) {
   $("#player_cards").replaceWith(card_list);
 }
 
+// Inject new chat messages into the log and refresh the scroller
 function add_new_messages(new_messages) {
   for(var i=0; i < new_messages.length; i++) {
     var list_element = document.createElement("li");
@@ -204,6 +170,7 @@ function add_new_messages(new_messages) {
   };
 }
 
+// Pop up the knock dialog
 function display_opponent_hand(hand) {
   if( hand.length == 0 ) {
     return false;
@@ -220,32 +187,13 @@ function display_opponent_hand(hand) {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-// Zak added....
-
-$(function(){
-  var chat_list = $("#scroller");
-  chat_list.jScrollPane();
-  if(chat_list[0].scrollTo != undefined) {
-    chat_list[0].scrollTo(chat_list.attr("scrollHeight"));
-  };
-
-  $('#information-icon').click(function(){
-    $('#information').toggle();
-  });
-
-  $('.colorbox').colorbox();
-});
-
-
+// Set the appropriate classes for the cards in the opponent's hand
+function draw_opponent_hand(number_of_cards) {
+  $("#their-hand .cards li").removeClass("back").removeClass("empty");
+  console.log("#their-hand .cards li:lt(" + number_of_cards + ")");
+  console.log("#their-hand .cards li:gt(" + (number_of_cards - 1) + ")");
+  $("#their-hand .cards li:lt(" + number_of_cards + ")").addClass("back");
+  $("#their-hand .cards li:eq(" + parseInt(number_of_cards) + ")").addClass("empty");
+  $("#their-hand .cards li:gt(" + parseInt(number_of_cards) + ")").addClass("empty");
+};
 
