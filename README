@@ -1,0 +1,39 @@
+GinRummy! is a fun little card game.
+It's written in erlang largely as a learning exersize and as a portpholio piece.
+It was coded by Colin Logan Campbell-McPherson and designed by Zak Harvey.
+
+TODO
+====
+
+Bugs
+----
+- When you click the deck to draw a card it fires off the library draw call but
+  doesn't return the comet response. When you fire off the second click it
+  returns both responses.
+
+Short term features
+-------------------
+- Deploy
+x Display a blank board on init
+x Style discard pile when empty
+x Reveal hand
+x Show empty slots in your hand
+x Click on deck to draw
+x Click on discard to discard
+x Click on card in hand to discard
+
+Mid term features
+-----------------
+- Display discard pile size
+- Re-ordering of hand
+- Redirect straight to a unique url
+- Auto draw 10 cards for each
+- Auto discard from library
+
+Long term features
+------------------
+- Make chat stick around
+- New game with same player
+- Put in rules for gin rummy
+- Sticky sorting
+
