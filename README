@@ -7,9 +7,9 @@ TODO
 
 Bugs
 ----
-- When you click the deck to draw a card it fires off the library draw call but
-  doesn't return the comet response. When you fire off the second click it
-  returns both responses.
+- Sometimes when you click the deck to draw a card it fires off the library
+  draw call but doesn't return the comet response. When you fire off the second
+  click it returns both responses.
 
 Short term features
 -------------------
