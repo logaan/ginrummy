@@ -44,7 +44,7 @@ jQuery(function() {
     return false;
   });
 
-  $("#knock").click(function() {
+  $("#reveal-all a").click(function() {
     jQuery.getJSON(game_path + "/knock");
     return false;
   });
@@ -61,37 +61,6 @@ jQuery(function() {
   });
 
   //
-  // Sorting
-  function apply_sort() {
-    // $("#player_cards li").draggable();
-    // $("#discard").droppable({
-    //   drop: function(event, ui) {
-    //     console.log("foo");
-    //   }
-    // });
-
-    $("#player_cards").sortable({
-      receive: function(event, ui) {
-        console.log("received an element from ", ui.sender.attr("id"));
-      },
-      update: function(event, ui) {
-        console.log("some card moved around from", event.originalTarget);
-        var card_names = $("#player_cards a").map(function(i, e){
-          return $(e).text();
-        });
-
-        jQuery.post(
-          game_path + "/manual_sort",
-          {"card_names": JSON.stringify(card_names.toArray())},
-          jQuery.noop,
-          "json"
-        );
-      }
-    });
-  }
-  apply_sort();
-
-  //
   // Longpoll comet
   // failed connections keeps track of how many times the comet request fails
   // each fail slows down the comet request by another 400ms and then tries
@@ -102,7 +71,6 @@ jQuery(function() {
       if(data != null) {
         failed_connections = 0;
         update_page(data)
-        apply_sort();
         comet_request();
       } else {
         failed_connections++;
@@ -116,11 +84,15 @@ jQuery(function() {
   comet_request();
 });
 
+// UPDATED FOR DESIGN
 function update_page(data) {
-  $("#deck .remaining").text(data.deck_size);
+  $("#deck .remaining").text(data.deck_size + " Remaining");
+  if(data.top_of_discard.length == 0) {
+    $("#discard a").attr("class", "empty");
+  } else {
+    $("#discard a").attr("class", data.top_of_discard);
+  };
   draw_opponent_hand(data.opponent_size);
-  $("#player_size").text(data.player_size);
-  $("#discard .remaining").text(data.top_of_discard);
   update_card_list(data.player_hand);
   add_new_messages(data.new_messages);
   display_opponent_hand(data.opponent_hand);
@@ -130,7 +102,6 @@ function update_page(data) {
 
 // UPDATED FOR DESIGN
 function update_card_list(cards) {
-  console.log(cards);
   var game_path = window.location.pathname;
 
   $("#your-hand .cards").empty();
@@ -150,6 +121,10 @@ function update_card_list(cards) {
     // inject it into the list
     $("#your-hand .cards").append(card_element);
   });
+
+  for(var i=0; i< (11 - cards.length); i++) {
+    $("#your-hand .cards").append($("<li class='empty'><a href=''></a></li>"));
+  }
 }
 
 // UPDATED FOR DESIGN

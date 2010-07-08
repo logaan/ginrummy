@@ -6,18 +6,25 @@ Bugs
 
 Short term features
 ===================
-- Display discard pile size
-- Click on deck to draw
-- Click on discard to discard
-- Click on card in hand to discard
-- Auto draw 10 cards for each
-- Auto discard from library
-- Redirect straight to a unique rul
-- Reveal hand
 - Deploy
+x Display a blank board on init
+x Style discard pile when empty
+x Reveal hand
+x Show empty slots in your hand
+x Click on deck to draw
+x Click on discard to discard
+x Click on card in hand to discard
 
 Mid term features
 =================
+- Display discard pile size
+- Re-ordering of hand
+- Redirect straight to a unique url
+- Auto draw 10 cards for each
+- Auto discard from library
+
+Long term features
+==================
 - Make chat stick around
 - New game with same player
 - Put in rules for gin rummy

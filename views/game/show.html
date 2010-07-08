@@ -31,17 +31,17 @@
 
   <ul class="cards">
 
-    <li class="empty"><a href="">&nbsp;</a></li>
-    <li class="empty"><a href="">&nbsp;</a></li>
-    <li class="empty"><a href="">&nbsp;</a></li>
-    <li class="empty"><a href="">&nbsp;</a></li>
-    <li class="empty"><a href="">&nbsp;</a></li>
-    <li class="empty"><a href="">&nbsp;</a></li>
-    <li class="empty"><a href="">&nbsp;</a></li>
-    <li class="empty"><a href="">&nbsp;</a></li>
-    <li class="empty"><a href="">&nbsp;</a></li>
-    <li class="empty"><a href="">&nbsp;</a></li>
-    <li class="empty"><a href="">&nbsp;</a></li>
+    <li class="empty"><a></a></li>
+    <li class="empty"><a></a></li>
+    <li class="empty"><a></a></li>
+    <li class="empty"><a></a></li>
+    <li class="empty"><a></a></li>
+    <li class="empty"><a></a></li>
+    <li class="empty"><a></a></li>
+    <li class="empty"><a></a></li>
+    <li class="empty"><a></a></li>
+    <li class="empty"><a></a></li>
+    <li class="empty"><a></a></li>
 
   </ul>
 
@@ -58,7 +58,7 @@
 
   <div id="discard">
 
-    <a href="#" class="king hearts">
+    <a href="#" class="empty">
       <span class="value"></span>
       <span class="suit"></span>
     </a>
@@ -66,7 +66,6 @@
     <h2>Deck</h2>
 
     <!-- <span class="remaining">32 Remaining</span> -->
-    <span class="remaining">{{ top_of_discard }}</span>
 
   </div>
 
@@ -78,88 +77,26 @@
 
   <h2>Your Hand</h2>
 
+  <!-- 
   <ul class="sort">
-
     <li class="value selected"><a href="">value</a></li>
     <li class="suit"><a href="">suit</a></li>
     <li class="none"><a href="">none</a></li>
-
   </ul>
+  -->
 
   <ul class="cards">
-
-    <li class="face one hearts">
-      <a href="">
-        <span class="value">1</span>
-        <span class="suit">hearts</span>
-      </a>
-    </li>
-
-    <li class="face two diamonds">
-      <a href="">
-        <span class="value">2</span>
-        <span class="suit">diamonds</span>
-      </a>
-    </li>
-
-    <li class="face three clubs">
-      <a href="">
-        <span class="value">3</span>
-        <span class="suit">clubs</span>
-      </a>
-    </li>
-
-    <li class="face four hearts">
-      <a href="">
-        <span class="value">4</span>
-        <span class="suit">hearts</span>
-      </a>
-    </li>
-
-    <li class="face five spades">
-      <a href="">
-        <span class="value">5</span>
-        <span class="suit">spades</span>
-      </a>
-    </li>
-
-    <li class="face six diamonds">
-      <a href="">
-        <span class="value">6</span>
-        <span class="suit">diamonds</span>
-      </a>
-    </li>
-
-    <li class="face seven clubs">
-      <a href="">
-        <span class="value">7</span>
-        <span class="suit">clubs</span>
-      </a>
-    </li>
-
-    <li class="face eight hearts">
-      <a href="">
-        <span class="value">8</span>
-        <span class="suit">hearts</span>
-      </a>
-    </li>
-
-    <li class="face nine spades">
-      <a href="">
-        <span class="value">9</span>
-        <span class="suit">spades</span>
-      </a>
-    </li>
-
-    <li class="face ten diamonds">
-      <a href="">
-        <span class="value">10</span>
-        <span class="suit">diamonds</span>
-      </a>
-    </li>
-
     <li class="empty"><a href="">Empty Space</a></li>
-
+    <li class="empty"><a href="">Empty Space</a></li>
+    <li class="empty"><a href="">Empty Space</a></li>
+    <li class="empty"><a href="">Empty Space</a></li>
+    <li class="empty"><a href="">Empty Space</a></li>
+    <li class="empty"><a href="">Empty Space</a></li>
+    <li class="empty"><a href="">Empty Space</a></li>
+    <li class="empty"><a href="">Empty Space</a></li>
+    <li class="empty"><a href="">Empty Space</a></li>
+    <li class="empty"><a href="">Empty Space</a></li>
+    <li class="empty"><a href="">Empty Space</a></li>
   </ul>
 
 </div>
@@ -180,72 +117,5 @@
   <p>Vivamus molestie feugiat risus at imperdiet. Curabitur nunc erat, imperdiet a consectetur sit amet, lobortis at purus. Donec rhoncus molestie semper. Proin posuere bibendum convallis. Integer elementum odio eu sem suscipit a fringilla libero consectetur. Morbi pharetra ante a enim suscipit gravida. Maecenas non posuere erat. Cras molestie commodo sollicitudin. Nam tortor sem, laoreet eu tristique in, semper vitae tellus. Integer congue urna in augue varius condimentum. </p>
 
 </div-->
-
-<!--
-<h1>Game between you and {{ player_two_name }}</h1>
-<p>
-  {{ player_two_name }} can join the game by visiting:<br />
-  <code>http://localhost:8000/game/{{ game_name }}</code>
-</p>
-<p>
-  When you're happy with your hand you can show it to your opponent by
-  <a id="knock" href="/game/{{ game_name }}/knock">knocking</a>.
-</p>
-
-<div id="main">
-
-  <div id="chat">
-    <h2>Chat</h2>
-    <ul id="chat_messages"></ul>
-    <form action="/game/{{ game_name }}/broadcast" method="post">
-      <input type="text" name="message" id="message" />
-      <input type="submit" value="Send" />
-    </form>
-  </div>
-
-  <h2>Zones</h2>
-  <h3>Discard pile</h3>
-  <ul>
-    <li>
-      <a href="/game/{{ game_name }}/discard_draw" id="discard">
-      {% if top_of_discard %}
-        {{ top_of_discard }}
-      {% else %}
-        Empty
-      {% endif %}
-      </a>
-    </li>
-  </ul>
-
-  <h3>Library</h3>
-  <ul>
-    <li>
-      <a href="/game/{{ game_name }}/library_draw" id="library">
-        <span id="deck_size">{{ deck_size }}</span> cards
-      </a>
-    </li>
-  </ul>
-
-  <h3>{{ player_two_name }}'s hand</h3>
-  <ul>
-    <li>
-      <span id="opponent_size">{{ opponent_size }}</span> cards
-    </li>
-  </ul>
-
-  <h2>Your hand</h2>
-  <p><span id="player_size">{{ card_count }}</span> cards</p>
-  <p><a href="/game/{{ game_name }}/value_sort" id="value_sort">Sort by value</a></p>
-  <ul id="player_cards">
-  {% for card in your_hand %}
-    <li><a href="/game/{{ game_name }}/discard/{{ card }}" class="card">{{ card }}</a></li>
-  {% endfor %}
-  </ul>
-
-  <h2>Instructions</h2>
-  <p>You can draw from the library by pressing CTRL+l. Or from the discard pile by pressing CTRL+d. You can prefix these commands with digits to multiply the number of times they happen. Hitting escape will clear the digits. For example you could type "3, ESC, 1, 0, CTRL+l" to draw 10 cards from the library. But only if you don't have the text box selected.</p>
-
-</div>
--->
 
 {% endblock %}
