@@ -39,8 +39,13 @@ jQuery(function() {
 
   $("#deck a").click(library_draw);
 
-  $("#value_sort").click(function() {
+  $(".sort .value").click(function() {
     jQuery.getJSON(game_path + "/value_sort");
+    return false;
+  });
+
+  $(".sort .suit").click(function() {
+    alert("Sorry I haven't implemented that yet :(");
     return false;
   });
 
@@ -82,6 +87,9 @@ jQuery(function() {
   }
 
   comet_request();
+
+  // HACK HACKET HACK HACK HACK HAAAAAAACK
+  jQuery.getJSON(game_path + "/value_sort");
 });
 
 // UPDATED FOR DESIGN
