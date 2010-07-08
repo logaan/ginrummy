@@ -29,15 +29,15 @@ jQuery(function() {
     return false;
   }
 
-  $(".card").live("click", function() {
-    var card_name = $(this).text();
+  $("#your-hand .face a").live("click", function() {
+    var card_name = [$(this).find(".value").text(), $(this).find(".suit").text()].join(" ");
     jQuery.getJSON(game_path + "/discard/" + card_name);
     return false;
   });
 
-  $("#discard").click(discard_draw);
+  $("#discard a").click(discard_draw);
 
-  $("#library").click(library_draw);
+  $("#deck a").click(library_draw);
 
   $("#value_sort").click(function() {
     jQuery.getJSON(game_path + "/value_sort");
@@ -117,14 +117,10 @@ jQuery(function() {
 });
 
 function update_page(data) {
-  $("#deck_size").text(data.deck_size);
+  $("#deck .remaining").text(data.deck_size);
   draw_opponent_hand(data.opponent_size);
   $("#player_size").text(data.player_size);
-  if (data.top_of_discard == "") {
-    $("#discard").text("Empty")
-  } else {
-    $("#discard").text(data.top_of_discard);
-  }
+  $("#discard .remaining").text(data.top_of_discard);
   update_card_list(data.player_hand);
   add_new_messages(data.new_messages);
   display_opponent_hand(data.opponent_hand);
@@ -132,28 +128,31 @@ function update_page(data) {
   return true;
 };
 
+// UPDATED FOR DESIGN
 function update_card_list(cards) {
+  console.log(cards);
   var game_path = window.location.pathname;
 
-  var card_list = document.createElement("ul");
-  $(card_list).attr("id", "player_cards");
+  $("#your-hand .cards").empty();
 
-  for(var i = 0; i < cards.length; i++) {
-    var card_name = cards[i];
+  $(cards).each(function(index, card_name){
+    // pull the data from the card name
+    var value_name = card_name.split(" ")[0];
+    var suit_name  = card_name.split(" ")[1];
 
-    var card = document.createElement("a");
-    $(card).addClass("card");
-    $(card).attr("href", game_path + "/discard/" + card_name);
-    $(card).text(card_name);
+    // construct the card element
+    var li = $("<li class='face'></li>").addClass(card_name);
+    var link = $("<a></a>").attr("href", game_path + "/discard/" + card_name);
+    var value = $("<span class='value'></span>").text(value_name);
+    var suit = $("<span class='suit'></span>").text(suit_name);
+    var card_element = li.append(link.append(value).append(suit));
 
-    var list_element = document.createElement("li");
-    $(list_element).append(card);
-    $(card_list).append(list_element);
-  }
-
-  $("#player_cards").replaceWith(card_list);
+    // inject it into the list
+    $("#your-hand .cards").append(card_element);
+  });
 }
 
+// UPDATED FOR DESIGN
 // Inject new chat messages into the log and refresh the scroller
 function add_new_messages(new_messages) {
   for(var i=0; i < new_messages.length; i++) {
@@ -187,11 +186,10 @@ function display_opponent_hand(hand) {
   }
 }
 
+// UPDATED FOR DESIGN
 // Set the appropriate classes for the cards in the opponent's hand
 function draw_opponent_hand(number_of_cards) {
   $("#their-hand .cards li").removeClass("back").removeClass("empty");
-  console.log("#their-hand .cards li:lt(" + number_of_cards + ")");
-  console.log("#their-hand .cards li:gt(" + (number_of_cards - 1) + ")");
   $("#their-hand .cards li:lt(" + number_of_cards + ")").addClass("back");
   $("#their-hand .cards li:eq(" + parseInt(number_of_cards) + ")").addClass("empty");
   $("#their-hand .cards li:gt(" + parseInt(number_of_cards) + ")").addClass("empty");

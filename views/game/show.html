@@ -3,7 +3,7 @@
 {% block content %}
 <div id="chat-container">
 
-  <h2>Our Chat</h2>
+  <h2>Chat & Log</h2>
 
   <div id="chat">
     <div id="scroller">
@@ -51,23 +51,22 @@
 <div id="common-cards">
 
   <div id="deck">
-
-    <a href="">Unknown</a>
+    <a href="#">Unknown</a>
     <h2>Deck</h2>
-    <span class="remaining">32 Remaining</span>
-
+    <span class="remaining">{{ deck_size }} Remaining</span>
   </div>
 
   <div id="discard">
 
-    <a href="" class="king hearts">
-      <span class="value">one</span>
-      <span class="suit">hearts</span>
+    <a href="#" class="king hearts">
+      <span class="value"></span>
+      <span class="suit"></span>
     </a>
 
     <h2>Deck</h2>
 
-    <span class="remaining">32 Remaining</span>
+    <!-- <span class="remaining">32 Remaining</span> -->
+    <span class="remaining">{{ top_of_discard }}</span>
 
   </div>
 

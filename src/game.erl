@@ -22,26 +22,26 @@ new_deck() ->
   shuffle_deck(generate_playing_cards()).
 
 generate_playing_cards() ->
-  Suites = ["Hearts", "Diamonds", "Spades", "Clubs"],
+  Suites = ["hearts", "diamonds", "spades", "clubs"],
   Values = [
-    {"King",  13},
-    {"Queen", 12},
-    {"Jack",  11},
-    {"Ten",   10},
-    {"Nine",  9},
-    {"Eight", 8},
-    {"Seven", 7},
-    {"Six",   6},
-    {"Five",  5},
-    {"Four",  4},
-    {"Three", 3},
-    {"Two",   2},
-    {"Ace",   1}
+    {"king",  13},
+    {"queen", 12},
+    {"jack",  11},
+    {"ten",   10},
+    {"nine",  9},
+    {"eight", 8},
+    {"seven", 7},
+    {"six",   6},
+    {"five",  5},
+    {"four",  4},
+    {"three", 3},
+    {"two",   2},
+    {"ace",   1}
   ],
   [ #card{
-      name = string:join([ValName, "of", S], " "),
-      properties = [{suite, S}, {value, Val}]
-    } || S <- Suites, {ValName, Val} <- Values ].
+      name = string:join([ValName, Suite], " "),
+      properties = [{suite, Suite}, {value, Val}]
+    } || Suite <- Suites, {ValName, Val} <- Values ].
 
 shuffle_deck(Deck) ->
   shuffle_deck([], Deck).
