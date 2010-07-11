@@ -1,19 +1,51 @@
-{% extends "../base.html" %}
-{% block content %}
-<h1>Gin Rummy!</h1>
-<p>The preferred passtime of english pirates.</p>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0028)http://10.1.1.2:8000/game/g5 -->
+<HTML xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><HEAD><META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-<form action="/game/start" method="post">
-  <p>
-    <label for="player_one_name" class="verticle">Your name</label>
-    <input id="player_one_name" name="player_one_name" />
-  </p>
-  <p>
-    <label for="player_two_name" class="verticle">Your friend's name</label>
-    <input id="player_two_name" name="player_two_name" />
-  </p>
-  <p>
-    <input type="submit" value="Start the game!" />
-  </p>
-</form>
-{% endblock %}
+  <!--meta name = "viewport" content = "user-scalable=no, width=1000px"-->
+  <link rel="apple-touch-icon" href="images/touch-icon.png"/>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <link rel="apple-touch-startup-image" href="images/startup.png">
+
+  <title>Gin Rummy!</title>
+
+  <link rel="stylesheet" type="text/css" href="/stylesheets/reset.css">
+  <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
+  <link rel="stylesheet" type="text/css" href="/stylesheets/jquery-ui-1.8.custom.css">
+  <link rel="stylesheet" type="text/css" href="/stylesheets/jScrollPane.css" />
+  <link rel="stylesheet" type="text/css" href="/stylesheets/colorbox.css" />
+
+  <script type="text/javascript" src="/scripts/jquery-1.4.2.min.js"></script>
+  <script type="text/javascript" src="/scripts/jquery-ui-1.8.custom.min.js"></script>
+  <script type="text/javascript" src="/scripts/json2.js"></script>
+  <script type="text/javascript" src="/scripts/jquery.mousewheel.js"></script>
+  <script type="text/javascript" src="/scripts/jScrollPane-1.2.3.js"></script>
+  <script type="text/javascript" src="/scripts/jquery.colorbox.js"></script>
+  <script type="text/javascript" src="/scripts/application.js"></script>
+
+</head>
+
+<body>
+
+  <div id="landing-form-container">
+
+  <h1>Gin Rummy!</h1>
+  <p>The preferred passtime of english pirates.</p>
+
+  <form action="/game/start" method="post" id="enter-names">
+  <ol>
+    <li>
+      <label for="player_one_name" class="verticle">Your name</label>
+      <input id="player_one_name" name="player_one_name" />
+    </li>
+    <li>
+      <label for="player_two_name" class="verticle">Friend's name</label>
+      <input id="player_two_name" name="player_two_name" />
+    </li>
+    <li>
+      <button type="submit" value="Start the game!">Start the Game!</button>
+    </li>
+  </ol>
+  </form>
+          
+  </div>

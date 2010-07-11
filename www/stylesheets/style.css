@@ -111,4 +111,11 @@ a#information-icon {background:url(../images/core/icon-info.png) no-repeat 0 0;w
 #information p {margin:10px 0;}
 #information h2 {background:url(../images/titles/instructions.png) no-repeat 0 0;width:156px;height:22px;overflow:hidden;text-indent:-999px;margin:0 auto 10px;display:block;}
 
-
+/* landing page */
+#landing-form-container {color:#f0d387;}
+#landing-form-container h1 {background:url(../images/core/logo.png) no-repeat 0 0;width:240px;height:120px;margin:0 auto;overflow:hidden;text-indent:-999px;}
+#landing-form-container p {text-align: center;margin:0 0 20px;font-size:1.2em;}
+form#enter-names {background:rgba(0,0,0,0.2);width:400px;border-radius:10px;-moz-border-radius:10px;border-bottom:1px solid rgba(255,255,255,0.1);border-top:1px solid rgba(0,0,0,0.2);margin:0 auto 20px;padding:20px 20px 10px 20px;}
+form#enter-names label {display:inline-block;width:100px;font-size:1.2em;}
+form#enter-names input {height:29px;border-radius:5px;-moz-border-radius:5px;background:#f3edd5;border:none;width:270px;padding:0 5px;margin:0 0 10px;}
+form#enter-names button {margin:0 0 0 100px;height:40px;width:90px;overflow:hidden;text-indent:-999px;border:none;background:url(../images/buttons/start.png) no-repeat 0 0;}
