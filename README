@@ -13,7 +13,7 @@ Bugs
 
 Short term features
 -------------------
-- Deploy
+x Deploy
 x Display a blank board on init
 x Style discard pile when empty
 x Reveal hand
@@ -27,8 +27,8 @@ Mid term features
 - Display discard pile size
 - Re-ordering of hand
 - Redirect straight to a unique url
-- Auto draw 10 cards for each
-- Auto discard from library
+x Auto draw 10 cards for each
+x Auto discard from library
 
 Long term features
 ------------------

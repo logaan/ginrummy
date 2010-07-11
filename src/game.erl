@@ -12,9 +12,13 @@ chat_server(#game{ chat_server=ChatServer }) -> ChatServer.
 
 % Real API
 start_game(Player1Name, Player2Name, GameName) ->
-  Zones = [{discard, []}, {deck, new_deck()}],
-  Player1 = #player{ name = Player1Name },
-  Player2 = #player{ name = Player2Name },
+  {Player1Hand, Deck1} = move(10, [], new_deck()),
+  {Player2Hand, Deck2} = move(10, [], Deck1),
+  {Discard, Deck3} = move([], Deck2),
+
+  Zones = [{discard, Discard}, {deck, Deck3}],
+  Player1 = #player{ name = Player1Name, hand = Player1Hand },
+  Player2 = #player{ name = Player2Name, hand = Player2Hand },
   {ok, ChatServer} = chat_server:start_link(),
   #game{ players=[Player1, Player2], zones=Zones, chat_server=ChatServer, game_name=GameName }.
 
@@ -86,6 +90,10 @@ move(ToDeck, [Card | FromDeck ]) ->
   {[Card | ToDeck], FromDeck};
 move(ToDeck, FromDeck = []) ->
   {ToDeck, FromDeck}.
+move(NumberOfCards, ToDeck, FromDeck) ->
+  {Cards, NewFromDeck} = lists:split(NumberOfCards, FromDeck),
+  NewToDeck = lists:append([Cards, ToDeck]),
+  {NewToDeck, NewFromDeck}.
 
 manual_sort(PlayerNumber, NewOrder, Game) ->
   Player = get_player(PlayerNumber, Game),
