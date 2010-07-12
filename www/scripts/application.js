@@ -154,24 +154,17 @@ function add_new_messages(new_messages) {
 
 // Pop up the knock dialog
 function display_opponent_hand(hand) {
-  if( hand.length == 0 ) {
-    return false;
-  } else {
-    var opponent_hand = document.createElement("ul");
-    $(opponent_hand).attr("title", "Your opponent's hand");
-    $(hand).map(function(index, card_name) {
-      var list_element = document.createElement("li");
-      $(list_element).text(card_name);
-      $(opponent_hand).append(list_element);
-    });
-
-    $(opponent_hand).dialog();
-  }
+  $(hand).each(function(index, value) {
+    var card = $("#their-hand .cards li:eq(" + index + ")");
+    card.find("a").append($("<span class='value'></span><span class='suit'></span>"));
+    card.removeClass("back").addClass("face").addClass(value);
+  });
 }
 
 // UPDATED FOR DESIGN
 // Set the appropriate classes for the cards in the opponent's hand
 function draw_opponent_hand(number_of_cards) {
+  $("#their-hand .cards li a").empty();
   $("#their-hand .cards li").removeClass("back").removeClass("empty");
   $("#their-hand .cards li:lt(" + number_of_cards + ")").addClass("back");
   $("#their-hand .cards li:eq(" + parseInt(number_of_cards) + ")").addClass("empty");
