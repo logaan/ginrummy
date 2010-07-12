@@ -22,13 +22,13 @@ Mid term features
 - Re-ordering of hand
 - Redirect straight to a unique url
 - Max and min hand size
-- Display opponents hand in place (instead of clickup)
-- Say your hand is revealed in the log
 - Turn reveal hand button into "start the next game" once clicked
 - Highlight the card you just drew
 - Timestamps on the log
 x Auto draw 10 cards for each
 x Auto discard from library
+x Display opponents hand in place (instead of overlay)
+x Say your hand is revealed in the log
 
 Long term features
 ------------------

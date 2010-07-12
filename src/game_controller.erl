@@ -49,6 +49,7 @@ handle_request(GameName, ["knock"]) ->
   {state, Game}        = game_server:state(GameName),
   #player{ hand=Hand } = game:get_player(PlayerNumber, Game),
   ChatServer           = game:chat_server(Game),
+  chat_server:direct_message(PlayerNumber, {chat, "You revealed your hand"}, ChatServer),
   chat_server:direct_message(OpponentNumber, {knock, Hand}, ChatServer),
   ajax_response(GameName);
 
