@@ -88,11 +88,10 @@ jQuery(function() {
 
   comet_request();
 
-  // HACK HACKET HACK HACK HACK HAAAAAAACK
+  // HACK HACKETY HACK HACK HACK HAAAAAAACK
   jQuery.getJSON(game_path + "/value_sort");
 });
 
-// UPDATED FOR DESIGN
 function update_page(data) {
   $("#deck .remaining").text(data.deck_size + " Remaining");
   if(data.top_of_discard.length == 0) {
@@ -103,12 +102,11 @@ function update_page(data) {
   draw_opponent_hand(data.opponent_size);
   update_card_list(data.player_hand);
   add_new_messages(data.new_messages);
-  display_opponent_hand(data.opponent_hand);
+  reveal_opponent_hand(data.opponent_hand);
 
   return true;
 };
 
-// UPDATED FOR DESIGN
 function update_card_list(cards) {
   var game_path = window.location.pathname;
 
@@ -135,7 +133,6 @@ function update_card_list(cards) {
   }
 }
 
-// UPDATED FOR DESIGN
 // Inject new chat messages into the log and refresh the scroller
 function add_new_messages(new_messages) {
   for(var i=0; i < new_messages.length; i++) {
@@ -152,8 +149,8 @@ function add_new_messages(new_messages) {
   };
 }
 
-// Pop up the knock dialog
-function display_opponent_hand(hand) {
+// Display your hand to your opponent
+function reveal_opponent_hand(hand) {
   $(hand).each(function(index, value) {
     var card = $("#their-hand .cards li:eq(" + index + ")");
     card.find("a").append($("<span class='value'></span><span class='suit'></span>"));
@@ -161,7 +158,6 @@ function display_opponent_hand(hand) {
   });
 }
 
-// UPDATED FOR DESIGN
 // Set the appropriate classes for the cards in the opponent's hand
 function draw_opponent_hand(number_of_cards) {
   $("#their-hand .cards li a").empty();
