@@ -122,6 +122,7 @@ json_view_data(#game{ players=[PlayerOne, PlayerTwo], zones=Zones }, PlayerNumbe
     {"opponent_size",   length(Opponent#player.hand)},
     {"deck_size",       length(Deck)},
     {"top_of_discard",  list_to_binary(top_of_discard(Discard))},
+    {"discard_size",    length(Discard)},
     {"new_messages",    ChatMessages},
     {"opponent_hand",   OpponentHand}
   ]},

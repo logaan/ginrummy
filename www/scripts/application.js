@@ -94,11 +94,9 @@ jQuery(function() {
 
 function update_page(data) {
   $("#deck .remaining").text(data.deck_size + " Remaining");
-  if(data.top_of_discard.length == 0) {
-    $("#discard a").attr("class", "empty");
-  } else {
-    $("#discard a").attr("class", data.top_of_discard);
-  };
+  var discard_class = data.top_of_discard.length == 0 ? "empty" : data.top_of_discard;
+  $("#discard a").attr("class", discard_class);
+  $("#discard .remaining").text(data.discard_size + " Card");
   draw_opponent_hand(data.opponent_size);
   update_card_list(data.player_hand);
   add_new_messages(data.new_messages);

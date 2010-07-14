@@ -18,7 +18,6 @@ x Click on card in hand to discard
 
 Mid term features
 -----------------
-- Display discard pile size
 - Re-ordering of hand
 - Redirect straight to a unique url
 - Max and min hand size
@@ -29,6 +28,7 @@ x Auto draw 10 cards for each
 x Auto discard from library
 x Display opponents hand in place (instead of overlay)
 x Say your hand is revealed in the log
+x Display discard pile size
 
 Long term features
 ------------------
