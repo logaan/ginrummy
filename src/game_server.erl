@@ -59,10 +59,15 @@ code_change(_OldVsn, State, _Extra) -> {ok, State}.
 handle_call(stop, _From, State) -> {stop, normal, State };
 
 handle_call({library_draw, Player}, _From, State) ->
-  NewState = game:library_draw(Player, State),
-  Message = lists:concat([player_name(State, Player), " drew a card"]),
-  chat_server:broadcast({chat, Message}, NewState#game.chat_server),
-  {reply, {library_draw, NewState}, NewState};
+  case game:library_draw(Player, State) of
+    {error, ErrorMessage} ->
+      chat_server:direct_message(Player, {chat, ErrorMessage}, State#game.chat_server),
+      {reply, {library_draw, State}, State};
+    NewState ->
+      Message = lists:concat([player_name(State, Player), " drew a card"]),
+      chat_server:broadcast({chat, Message}, NewState#game.chat_server),
+      {reply, {library_draw, NewState}, NewState}
+  end;
 
 handle_call({discard_draw, Player}, _From, State) ->
   NewState = game:discard_draw(Player, State),
