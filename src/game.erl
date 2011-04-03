@@ -69,8 +69,13 @@ library_draw(Number, Game = #game{players=Players}) ->
     false -> hand_move(deck, Number, fun move/2, Game)
   end.
 
-discard_draw(Number, Game) ->
-  hand_move(discard, Number, fun move/2, Game).
+discard_draw(Number, Game = #game{players=Players}) ->
+  Player = lists:nth(Number, Players),
+  Hand = Player#player.hand,
+  case length(Hand) >= 11 of
+    true -> {error, "Your hand is full"};
+    false -> hand_move(discard, Number, fun move/2, Game)
+  end.
 
 discard(Number, CardName, Game) ->
   Strategy = fun(Hand, Discard) ->
