@@ -2,8 +2,8 @@
 -include_lib("stdlib/include/qlc.hrl").
 -include("records.hrl").
 -export([players/1, get_player/2, zones/1, chat_server/1]).
--export([start_game/3, new_deck/0, library_draw/2, discard_draw/2, discard/3,
-         manual_sort/3, value_sort/2, test/0]).
+-export([start_game/3, restart_game/1, new_deck/0, library_draw/2,
+         discard_draw/2, discard/3, manual_sort/3, value_sort/2, test/0]).
 
 % Accessors
 players(#game{ players=Players }) -> Players.
@@ -21,6 +21,11 @@ start_game(Player1Name, Player2Name, GameName) ->
   Player2 = #player{ name = Player2Name, hand = Player2Hand },
   {ok, ChatServer} = chat_server:start_link(),
   #game{ players=[Player1, Player2], zones=Zones, chat_server=ChatServer, game_name=GameName }.
+
+restart_game(#game{ players=[Player1, Player2], game_name=GameName}) ->
+  #player{ name = Player1Name } = Player1,
+  #player{ name = Player2Name } = Player2,
+  start_game(Player1Name, Player2Name, GameName).
 
 new_deck() ->
   shuffle_deck(generate_playing_cards()).

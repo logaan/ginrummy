@@ -28,6 +28,14 @@ handle_request(GameName, []) ->
   end,
   {render, "game/show.html", ViewData};
 
+handle_request(GameName, ["restart"]) ->
+  game_server:restart(GameName),
+  {state, Game}       = game_server:state(GameName),
+  beepbeep_args:set_session_data(GameName, 1, Env),
+  chat_server:subscribe(1, Game#game.chat_server),
+  chat_server:subscribe(2, Game#game.chat_server),
+  {redirect, lists:concat(["/game/", GameName])};
+
 handle_request(GameName, ["library_draw"]) ->
   PlayerNumber      = beepbeep_args:get_session_data(GameName, Env),
   {library_draw, _} = game_server:library_draw(GameName, PlayerNumber),

@@ -3,7 +3,7 @@
 -include("records.hrl").
 
 %% API
--export([start/1, start/2, library_draw/2, discard_draw/2, discard/3, manual_sort/3, value_sort/2, state/1, stop/0]).
+-export([start/1, start/2, restart/1, library_draw/2, discard_draw/2, discard/3, manual_sort/3, value_sort/2, state/1, stop/0]).
 
 %% gen-server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
@@ -19,6 +19,8 @@ start(Player1Name, Player2Name) ->
   {new_id, Id} = id_server:new_id(),
   GameName = list_to_atom(lists:concat(["g", Id])),
   {GameName, gen_server:start_link({local, GameName}, ?MODULE, [Player1Name, Player2Name, GameName], [])}.
+restart(Game) ->
+  gen_server_call(Game, {restart}).
 library_draw(Game, Player) ->
   gen_server_call(Game, {library_draw, Player}).
 discard_draw(Game, Player) ->
@@ -57,6 +59,10 @@ terminate(_Reason, State) ->
 code_change(_OldVsn, State, _Extra) -> {ok, State}.
 
 handle_call(stop, _From, State) -> {stop, normal, State };
+
+handle_call({restart}, _From, State) ->
+  NewState = game:restart_game(State),
+  {reply, {restart, NewState}, NewState};
 
 handle_call({library_draw, Player}, _From, State) ->
   case game:library_draw(Player, State) of
