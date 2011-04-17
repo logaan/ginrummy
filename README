@@ -32,14 +32,14 @@ Long term features
 ------------------
 - Re-ordering of hand
 - Make chat stick around
-- New game with same player
+x New game with same player
 x Put in rules for gin rummy
 - Sticky sorting
   - Highlight the card you just drew
 - Notification when someone closes the window
-- Facebook integration
-  - Request game with specific person via mail
-  - Request game with anyone by posting on your wall
+x Facebook integration
+  x Request game with specific person via mail
+  x Request game with anyone by posting on your wall
 
 Bugs
 ----
