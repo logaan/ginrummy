@@ -18,8 +18,8 @@ x Click on card in hand to discard
 
 Mid term features
 -----------------
-- Max and min hand size
-? Redirect straight to a unique url
+x Max and min hand size
+x Redirect straight to a unique url
 ? Turn reveal hand button into "start the next game" once clicked
 ? Timestamps on the log
 x Auto draw 10 cards for each
@@ -33,7 +33,7 @@ Long term features
 - Re-ordering of hand
 - Make chat stick around
 - New game with same player
-- Put in rules for gin rummy
+x Put in rules for gin rummy
 - Sticky sorting
   - Highlight the card you just drew
 - Notification when someone closes the window
