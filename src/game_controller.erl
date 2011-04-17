@@ -94,6 +94,11 @@ handle_request(GameName, ["manual_sort"]) ->
 handle_request(GameName, ["value_sort"]) ->
   PlayerNumber = beepbeep_args:get_session_data(GameName, Env),
   game_server:value_sort(PlayerNumber, GameName),
+  ajax_response(GameName);
+
+handle_request(GameName, ["suite_sort"]) ->
+  PlayerNumber = beepbeep_args:get_session_data(GameName, Env),
+  game_server:suite_sort(PlayerNumber, GameName),
   ajax_response(GameName).
 
 html_view_data(#game{zones=Zones}, CurrentPlayer, Opponent) ->

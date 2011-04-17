@@ -50,7 +50,7 @@ jQuery(function() {
   });
 
   $(".sort .suit").click(function() {
-    alert("Sorry I haven't implemented that yet :(");
+    jQuery.getJSON(game_path + "/suite_sort");
     return false;
   });
 

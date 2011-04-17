@@ -3,7 +3,7 @@
 -include("records.hrl").
 
 %% API
--export([start/1, start/2, restart/1, library_draw/2, discard_draw/2, discard/3, manual_sort/3, value_sort/2, state/1, stop/0]).
+-export([start/1, start/2, restart/1, library_draw/2, discard_draw/2, discard/3, manual_sort/3, value_sort/2, suite_sort/2, state/1, stop/0]).
 
 %% gen-server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
@@ -31,6 +31,8 @@ manual_sort(Game, PlayerNumber, NewOrder) ->
   gen_server_call(Game, {manual_sort, PlayerNumber, NewOrder}).
 value_sort(PlayerNumber, Game) ->
   gen_server_call(Game, {value_sort, PlayerNumber}).
+suite_sort(PlayerNumber, Game) ->
+  gen_server_call(Game, {suite_sort, PlayerNumber}).
 state(Game) ->
   gen_server_call(Game, state).
 stop() ->
@@ -104,6 +106,11 @@ handle_call({value_sort, PlayerNumber}, _From, State) ->
   NewState = game:value_sort(PlayerNumber, State),
   chat_server:refresh(PlayerNumber, NewState#game.chat_server),
   {reply, {value_sort, NewState}, NewState};
+
+handle_call({suite_sort, PlayerNumber}, _From, State) ->
+  NewState = game:suite_sort(PlayerNumber, State),
+  chat_server:refresh(PlayerNumber, NewState#game.chat_server),
+  {reply, {suite_sort, NewState}, NewState};
 
 handle_call(crash, _From, _State) ->
   1/0;
