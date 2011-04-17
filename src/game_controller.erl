@@ -34,7 +34,7 @@ handle_request(GameName, ["restart"]) ->
   beepbeep_args:set_session_data(GameName, 1, Env),
   chat_server:subscribe(1, Game#game.chat_server),
   chat_server:subscribe(2, Game#game.chat_server),
-  {redirect, lists:concat(["/game/", GameName])};
+  ajax_response(GameName);
 
 handle_request(GameName, ["library_draw"]) ->
   PlayerNumber      = beepbeep_args:get_session_data(GameName, Env),

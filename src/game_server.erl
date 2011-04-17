@@ -62,6 +62,9 @@ handle_call(stop, _From, State) -> {stop, normal, State };
 
 handle_call({restart}, _From, State) ->
   NewState = game:restart_game(State),
+  Message = "A new round has begun",
+  chat_server:broadcast({chat, Message}, State#game.chat_server),
+  chat_server:broadcast({chat, Message}, NewState#game.chat_server),
   {reply, {restart, NewState}, NewState};
 
 handle_call({library_draw, Player}, _From, State) ->

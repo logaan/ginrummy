@@ -19,6 +19,11 @@ jQuery(function() {
 
   //
   // Click behaviors
+  $("#restart").click(function() {
+    jQuery.getJSON(game_path + "/restart");
+    return false;
+  });
+
   function discard_draw() {
     jQuery.getJSON(game_path + "/discard_draw");
     return false;
