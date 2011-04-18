@@ -49,3 +49,4 @@ Bugs
   design and parts of the js not matching up.
 - Sometimes when you reveal your hand the wrong cards appear. Could be a bug
   related to just having implemented new reveal hand styles.
+- New round option merges both players into one
