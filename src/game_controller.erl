@@ -31,7 +31,6 @@ handle_request(GameName, []) ->
 handle_request(GameName, ["restart"]) ->
   game_server:restart(GameName),
   {state, Game}       = game_server:state(GameName),
-  beepbeep_args:set_session_data(GameName, 1, Env),
   chat_server:subscribe(1, Game#game.chat_server),
   chat_server:subscribe(2, Game#game.chat_server),
   ajax_response(GameName);
