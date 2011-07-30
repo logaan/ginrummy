@@ -1,4 +1,4 @@
-body { background:url(../images/core/main-background.gif) no-repeat center 0, url(../images/core/repeat.gif) repeat center 0;font:normal 62.5%/20px arial; }
+body { background:url(../images/core/main-background.png) no-repeat center 0, url(../images/core/repeat.gif) repeat center 0;font:normal 62.5%/20px arial; }
 
 #header-container {background:#000;background:rgba(0,0,0,0.2);}
 #header {line-height:40px;color:#f0d387;font-size:1.2em;width:960px;margin:0 auto;text-align:right;}
