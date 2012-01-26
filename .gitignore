@@ -3,4 +3,5 @@
 *.beam
 Mnesia*
 .DS_Store
+tags
 

@@ -1,9 +1,9 @@
 -module(game).
--include_lib("stdlib/include/qlc.hrl").
 -include("records.hrl").
 -export([players/1, get_player/2, zones/1, chat_server/1]).
 -export([start_game/3, restart_game/1, new_deck/0, library_draw/2,
-         discard_draw/2, discard/3, manual_sort/3, value_sort/2, suite_sort/2, test/0]).
+         discard_draw/2, discard/3, manual_sort/3, value_sort/2, suite_sort/2,
+         test/0]).
 
 % Accessors
 players(#game{ players=Players }) -> Players.
@@ -20,7 +20,8 @@ start_game(Player1Name, Player2Name, GameName) ->
   Player1 = #player{ name = Player1Name, hand = Player1Hand },
   Player2 = #player{ name = Player2Name, hand = Player2Hand },
   {ok, ChatServer} = chat_server:start_link(),
-  #game{ players=[Player1, Player2], zones=Zones, chat_server=ChatServer, game_name=GameName }.
+  #game{ players=[Player1, Player2], zones=Zones,
+         chat_server=ChatServer, game_name=GameName }.
 
 restart_game(#game{ players=[Player1, Player2], game_name=GameName}) ->
   #player{ name = Player1Name } = Player1,
@@ -94,10 +95,12 @@ hand_move(ZoneName, PlayerNumber, Strategy, Game = #game{players=Players, zones=
   % Decompose
   Player = lists:nth(PlayerNumber, Players),
   Zone   = proplists:get_value(ZoneName, Zones),
+
   % Do stuff
   {NewHand, NewZone} = Strategy(Player#player.hand, Zone),
+
   % Recompose
-  NewPlayer = Player#player{hand=NewHand},
+  NewPlayer = player:sort_hand(Player#player{hand=NewHand}),
   NewGame   = Game#game{zones=replace_property({ZoneName, NewZone}, Zones)},
   replace_player(PlayerNumber, NewPlayer, NewGame).
 
@@ -110,6 +113,7 @@ move(NumberOfCards, ToDeck, FromDeck) ->
   NewToDeck = lists:append([Cards, ToDeck]),
   {NewToDeck, NewFromDeck}.
 
+% TODO: Implement in UI
 manual_sort(PlayerNumber, NewOrder, Game) ->
   Player = get_player(PlayerNumber, Game),
   Hand = Player#player.hand,
@@ -122,6 +126,7 @@ manual_sort(PlayerNumber, NewOrder, Game) ->
 get_player(Number, #game{players=Players}) ->
   lists:nth(Number, Players).
 
+% TODO: Remove
 value_sort(PlayerNumber, Game) ->
   Player = get_player(PlayerNumber, Game),
   Hand = Player#player.hand,
@@ -131,6 +136,7 @@ value_sort(PlayerNumber, Game) ->
   NewHand = lists:sort(CardCompare, Hand),
   replace_player(PlayerNumber, Player#player{ hand=NewHand }, Game).
 
+% TODO: Remove
 suite_sort(PlayerNumber, Game) ->
   Player = get_player(PlayerNumber, Game),
   Hand = Player#player.hand,
