@@ -111,8 +111,14 @@ html_view_data(#game{zones=Zones}, CurrentPlayer, Opponent) ->
     {your_hand,       card_list(CurrentPlayer)},
     {top_of_discard,  top_of_discard(Discard)},
     {deck_size,       length(Deck)},
-    {opponent_size,   length(Opponent#player.hand)}
+    {opponent_size,   length(Opponent#player.hand)},
+    {value_sort_selected,  sort_selected(CurrentPlayer, value)},
+    {suite_sort_selected,  sort_selected(CurrentPlayer, suite)},
+    {no_sort_selected,     sort_selected(CurrentPlayer, none)}
   ].
+
+sort_selected(#player{sort = Sort}, Sort) -> "selected";
+sort_selected(_, _) -> "".
 
 json_view_data(#game{ players=[PlayerOne, PlayerTwo], zones=Zones }, PlayerNumber, Messages) ->
   Deck    = proplists:get_value(deck, Zones),
