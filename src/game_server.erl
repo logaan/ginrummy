@@ -3,10 +3,12 @@
 -include("records.hrl").
 
 %% API
--export([start/1, start/2, restart/1, library_draw/2, discard_draw/2, discard/3, manual_sort/3, value_sort/2, suite_sort/2, state/1, stop/0]).
+-export([start/1, start/2, restart/1, library_draw/2, discard_draw/2,
+    discard/3, manual_sort/3, value_sort/2, suite_sort/2, state/1, stop/0]).
 
 %% gen-server callbacks
--export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
+-export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2,
+    code_change/3]).
 
 %%====================================================================
 %% API
@@ -18,7 +20,8 @@ start(State = #game{ game_name=GameName }) ->
 start(Player1Name, Player2Name) ->
   {new_id, Id} = id_server:new_id(),
   GameName = list_to_atom(lists:concat(["g", Id])),
-  {GameName, gen_server:start_link({local, GameName}, ?MODULE, [Player1Name, Player2Name, GameName], [])}.
+  {GameName, gen_server:start_link({local, GameName}, ?MODULE,
+      [Player1Name, Player2Name, GameName], [])}.
 restart(Game) ->
   gen_server_call(Game, {restart}).
 library_draw(Game, Player) ->
@@ -130,8 +133,4 @@ gen_server_call(Pid, Message) when is_list(Pid) ->
   gen_server:call(AtomicPid, Message);
 gen_server_call(Pid, Message) ->
   gen_server:call(Pid, Message).
-
-%%====================================================================
-%%% Unit tests
-%%====================================================================
 
