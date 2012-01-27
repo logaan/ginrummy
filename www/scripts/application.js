@@ -47,6 +47,10 @@ jQuery(function() {
   $(".sort a").click(function() {
     var sort_type = $(this).text();
     jQuery.getJSON(game_path + "/sort/" + sort_type);
+
+    $(".sort li").removeClass("selected")
+    $(this).parent("li").addClass("selected")
+
     return false;
   });
 
