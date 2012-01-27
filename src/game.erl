@@ -126,25 +126,16 @@ manual_sort(PlayerNumber, NewOrder, Game) ->
 get_player(Number, #game{players=Players}) ->
   lists:nth(Number, Players).
 
-% TODO: Remove
 value_sort(PlayerNumber, Game) ->
-  Player = get_player(PlayerNumber, Game),
-  Hand = Player#player.hand,
-  CardCompare = fun(#card{properties=Prop1}, #card{properties=Prop2}) ->
-    proplists:get_value(value, Prop1) > proplists:get_value(value, Prop2)
-  end,
-  NewHand = lists:sort(CardCompare, Hand),
-  replace_player(PlayerNumber, Player#player{ hand=NewHand }, Game).
+  set_sort_preference(PlayerNumber, Game, value).
 
-% TODO: Remove
 suite_sort(PlayerNumber, Game) ->
+  set_sort_preference(PlayerNumber, Game, suite).
+
+set_sort_preference(PlayerNumber, Game, Preference) ->
   Player = get_player(PlayerNumber, Game),
-  Hand = Player#player.hand,
-  CardCompare = fun(#card{properties=Prop1}, #card{properties=Prop2}) ->
-    proplists:get_value(suite, Prop1) < proplists:get_value(suite, Prop2)
-  end,
-  NewHand = lists:sort(CardCompare, Hand),
-  replace_player(PlayerNumber, Player#player{ hand=NewHand }, Game).
+  NewPlayer = player:set_sort_preference(Player, Preference),
+  replace_player(PlayerNumber, NewPlayer, Game).
 
 replace_player(Number, Player, Game = #game{ players=Players }) ->
   {Head, [_OldPlayer|Tail]} = lists:split(Number - 1, Players),
