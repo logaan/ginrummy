@@ -1,9 +1,9 @@
 -module(game).
+-include_lib("eunit/include/eunit.hrl").
 -include("records.hrl").
 -export([players/1, get_player/2, zones/1, chat_server/1]).
 -export([start_game/3, restart_game/1, new_deck/0, library_draw/2,
-         discard_draw/2, discard/3, manual_sort/3, value_sort/2, suite_sort/2,
-         test/0]).
+         discard_draw/2, discard/3, manual_sort/3, value_sort/2, suite_sort/2]).
 
 % Accessors
 players(#game{ players=Players }) -> Players.
@@ -154,21 +154,21 @@ replace_player(Number, Player, Game = #game{ players=Players }) ->
 replace_property(NewProp={Key, _Value}, Proplist) ->
   [NewProp | proplists:delete(Key, Proplist)].
 
-test() ->
+example_game_test() ->
   Game1 = start_game("foo", "bar", foo),
 
   Game2 = #game{players=[P11|_], zones=Zones1} = game:discard_draw(1, Game1),
   Discard1 = proplists:get_value(discard, Zones1),
-  0 = length(P11#player.hand),
-  0 = length(Discard1),
+  ?assertEqual(11, length(P11#player.hand)),
+  ?assertEqual(0, length(Discard1)),
 
-  Game3 = #game{players=[P12|_]} = game:library_draw(1, Game2),
-  [#card{name=CardName}|_] = P12#player.hand,
+  ?assertEqual({error,"Your hand is full"},  game:library_draw(1, Game2)),
 
-  #game{players=[P13|_], zones=Zones2} = game:discard(1, CardName, Game3),
+  [#card{name=CardName}|_] = P11#player.hand,
+  #game{players=[P12|_], zones=Zones2} = game:discard(1, CardName, Game2),
   Discard2 = proplists:get_value(discard, Zones2),
-  0 = length(P13#player.hand),
-  1 = length(Discard2),
+  ?assertEqual(10, length(P12#player.hand)),
+  ?assertEqual(1, length(Discard2)),
 
   ok.
 
