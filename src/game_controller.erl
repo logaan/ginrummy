@@ -90,14 +90,9 @@ handle_request(GameName, ["manual_sort"]) ->
   game_server:manual_sort(GameName, PlayerNumber, StringCardNames),
   ajax_response(GameName);
 
-handle_request(GameName, ["value_sort"]) ->
+handle_request(GameName, ["sort", Sort]) ->
   PlayerNumber = beepbeep_args:get_session_data(GameName, Env),
-  game_server:value_sort(PlayerNumber, GameName),
-  ajax_response(GameName);
-
-handle_request(GameName, ["suite_sort"]) ->
-  PlayerNumber = beepbeep_args:get_session_data(GameName, Env),
-  game_server:suite_sort(PlayerNumber, GameName),
+  game_server:sort(PlayerNumber, GameName, list_to_atom(Sort)),
   ajax_response(GameName).
 
 html_view_data(#game{zones=Zones}, CurrentPlayer, Opponent) ->
@@ -113,7 +108,7 @@ html_view_data(#game{zones=Zones}, CurrentPlayer, Opponent) ->
     {deck_size,       length(Deck)},
     {opponent_size,   length(Opponent#player.hand)},
     {value_sort_selected,  sort_selected(CurrentPlayer, value)},
-    {suite_sort_selected,  sort_selected(CurrentPlayer, suite)},
+    {suit_sort_selected,  sort_selected(CurrentPlayer, suit)},
     {no_sort_selected,     sort_selected(CurrentPlayer, none)}
   ].
 

@@ -3,7 +3,7 @@
 -include("records.hrl").
 -export([players/1, get_player/2, zones/1, chat_server/1]).
 -export([start_game/3, restart_game/1, new_deck/0, library_draw/2,
-         discard_draw/2, discard/3, manual_sort/3, value_sort/2, suite_sort/2]).
+         discard_draw/2, discard/3, manual_sort/3, sort/3]).
 
 % Accessors
 players(#game{ players=Players }) -> Players.
@@ -50,7 +50,7 @@ generate_playing_cards() ->
   ],
   [ #card{
       name = string:join([ValName, Suite], " "),
-      properties = [{suite, Suite}, {value, Val}]
+      properties = [{suit, Suite}, {value, Val}]
     } || Suite <- Suites, {ValName, Val} <- Values ].
 
 shuffle_deck(Deck) ->
@@ -126,13 +126,7 @@ manual_sort(PlayerNumber, NewOrder, Game) ->
 get_player(Number, #game{players=Players}) ->
   lists:nth(Number, Players).
 
-value_sort(PlayerNumber, Game) ->
-  set_sort_preference(PlayerNumber, Game, value).
-
-suite_sort(PlayerNumber, Game) ->
-  set_sort_preference(PlayerNumber, Game, suite).
-
-set_sort_preference(PlayerNumber, Game, Preference) ->
+sort(PlayerNumber, Game, Preference) ->
   Player = get_player(PlayerNumber, Game),
   NewPlayer = player:set_sort_preference(Player, Preference),
   replace_player(PlayerNumber, NewPlayer, Game).

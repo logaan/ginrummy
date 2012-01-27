@@ -12,7 +12,6 @@ sort_hand(Player = #player{sort=Sort, hand=Hand}) ->
   Player#player{hand=NewHand}.
 
 % Internal
-
 sort_hand(none, Hand) -> Hand;
 sort_hand(Sort, Hand) ->
   lists:sort(fun(#card{properties=Prop1}, #card{properties=Prop2}) ->
@@ -22,8 +21,8 @@ sort_hand(Sort, Hand) ->
     end
   end, Hand).
 
-other_sort(value) -> suite;
-other_sort(suite) -> value.
+other_sort(value) -> suit;
+other_sort(suit) -> value.
 
 % Tests
 no_sort_test() ->
@@ -31,36 +30,36 @@ no_sort_test() ->
   Player1 = sort_hand(Player),
   Player1 = Player.
 
-suite_sort_test() ->
-  Player  = example_player(suite),
+suit_sort_test() ->
+  Player  = example_player(suit),
   Player1 = sort_hand(Player),
-  ?assertEqual(#player{name="foo", sort=suite, hand=[
-      #card{name = "ace clubs",     properties = [{suite,"clubs"},   {value,1}]},
-      #card{name = "five diamonds", properties = [{suite,"diamonds"},{value,5}]},
-      #card{name = "seven hearts",  properties = [{suite,"hearts"},  {value,7}]},
-      #card{name = "two spades",    properties = [{suite,"spades"},  {value,2}]},
-      #card{name = "five spades",   properties = [{suite,"spades"},  {value,5}]}
+  ?assertEqual(#player{name="foo", sort=suit, hand=[
+      #card{name = "ace clubs",     properties = [{suit,"clubs"},   {value,1}]},
+      #card{name = "five diamonds", properties = [{suit,"diamonds"},{value,5}]},
+      #card{name = "seven hearts",  properties = [{suit,"hearts"},  {value,7}]},
+      #card{name = "two spades",    properties = [{suit,"spades"},  {value,2}]},
+      #card{name = "five spades",   properties = [{suit,"spades"},  {value,5}]}
     ]}, Player1).
 
 value_sort_test() ->
   Player  = example_player(value),
   Player1 = sort_hand(Player),
   ?assertEqual(#player{name="foo", sort=value, hand=[
-      #card{name = "ace clubs",     properties = [{suite,"clubs"},   {value,1}]},
-      #card{name = "two spades",    properties = [{suite,"spades"},  {value,2}]},
-      #card{name = "five diamonds", properties = [{suite,"diamonds"},{value,5}]},
-      #card{name = "five spades",   properties = [{suite,"spades"},  {value,5}]},
-      #card{name = "seven hearts",  properties = [{suite,"hearts"},  {value,7}]}
+      #card{name = "ace clubs",     properties = [{suit,"clubs"},   {value,1}]},
+      #card{name = "two spades",    properties = [{suit,"spades"},  {value,2}]},
+      #card{name = "five diamonds", properties = [{suit,"diamonds"},{value,5}]},
+      #card{name = "five spades",   properties = [{suit,"spades"},  {value,5}]},
+      #card{name = "seven hearts",  properties = [{suit,"hearts"},  {value,7}]}
     ]}, Player1).
 
 example_player() ->
   example_player(none).
 example_player(Sort) ->
   #player{name="foo", sort=Sort, hand=[
-    #card{name = "five spades",   properties = [{suite,"spades"},  {value,5}]},
-    #card{name = "ace clubs",     properties = [{suite,"clubs"},   {value,1}]},
-    #card{name = "two spades",    properties = [{suite,"spades"},  {value,2}]},
-    #card{name = "five diamonds", properties = [{suite,"diamonds"},{value,5}]},
-    #card{name = "seven hearts",  properties = [{suite,"hearts"},  {value,7}]}
+    #card{name = "five spades",   properties = [{suit,"spades"},  {value,5}]},
+    #card{name = "ace clubs",     properties = [{suit,"clubs"},   {value,1}]},
+    #card{name = "two spades",    properties = [{suit,"spades"},  {value,2}]},
+    #card{name = "five diamonds", properties = [{suit,"diamonds"},{value,5}]},
+    #card{name = "seven hearts",  properties = [{suit,"hearts"},  {value,7}]}
   ]}.
 
