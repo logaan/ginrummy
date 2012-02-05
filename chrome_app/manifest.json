@@ -1,0 +1,16 @@
+{
+  "name": "GinRummy",
+  "description": "Play gin rummy online",
+  "version": "1",
+  "app": {
+    "urls": [
+      "http://localhost/"
+    ],
+    "launch": {
+      "web_url": "http://localhost:8000/"
+    }
+  },
+  "icons": {
+    "128": "128.png"
+  }
+}
