@@ -7,7 +7,10 @@
       "http://localhost/"
     ],
     "launch": {
-      "web_url": "http://localhost:8000/"
+      "web_url": "http://localhost:8000/",
+      "container": "panel",
+      "width": 1020,
+      "height": 590
     }
   },
   "icons": {
