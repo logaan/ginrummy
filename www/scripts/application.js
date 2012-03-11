@@ -1,4 +1,6 @@
 jQuery(function() {
+  track_event("Page load");
+
   var key_multiplier = 0;
   var game_path = window.location.pathname;
 
@@ -16,25 +18,25 @@ jQuery(function() {
   //
   // Click behaviors
   $("#restart").click(function() {
-    mpq.track("New round");
+    track_event("New round");
     jQuery.getJSON(game_path + "/restart");
     return false;
   });
 
   function discard_draw() {
-    mpq.track("Discard draw");
+    track_event("Discard draw");
     jQuery.getJSON(game_path + "/discard_draw");
     return false;
   }
 
   function library_draw() {
-    mpq.track("Library draw");
+    track_event("Library draw");
     jQuery.getJSON(game_path + "/library_draw");
     return false;
   }
 
   $("#your-hand .face a").live("click", function() {
-    mpq.track("Hand discard");
+    track_event("Hand discard");
     var card_name = [$(this).find(".value").text(), $(this).find(".suit").text()].join(" ");
     jQuery.getJSON(game_path + "/discard/" + card_name);
     return false;
@@ -46,7 +48,7 @@ jQuery(function() {
 
   $(".sort a").click(function() {
     var sort_type = $(this).text();
-    mpq.track(sort_type + " sort");
+    track_event(sort_type + " sort");
     jQuery.getJSON(game_path + "/sort/" + sort_type);
 
     $(".sort li").removeClass("selected")
@@ -56,16 +58,17 @@ jQuery(function() {
   });
 
   $("#reveal-all a").click(function() {
-    mpq.track("Knock");
+    track_event("Knock");
     jQuery.getJSON(game_path + "/knock");
     return false;
   });
 
   $("#chat-container form").submit(function() {
-    mpq.track("Send chat");
+    data = { message: $("#chat-field").val() };
+    track_event("Send chat", data);
     jQuery.post(
       game_path + "/broadcast",
-      { message: $("#chat-field").val() },
+      data,
       function() {  },
       "json"
     );
@@ -99,6 +102,12 @@ jQuery(function() {
   // HACK HACKETY HACK HACK HACK HAAAAAAACK
   jQuery.getJSON(game_path + "/sort/none");
 });
+
+function track_event(type, additional_data) {
+  var game_path = window.location.pathname;
+  var default_data = {game_path: game_path};
+  mpq.track(type, jQuery.extend(default_data, additional_data));
+}
 
 function update_page(data) {
   $("#deck .remaining").text(data.deck_size + " Remaining");
@@ -157,7 +166,6 @@ function add_new_messages(new_messages) {
 
 // Display your hand to your opponent
 function reveal_opponent_hand(hand) {
-  mpq.track("Reveal opponent hand");
   $(hand).each(function(index, value) {
     var card = $("#their-hand .cards li:eq(" + index + ")");
     card.find("a").append($("<span class='value'></span><span class='suit'></span>"));
@@ -167,7 +175,6 @@ function reveal_opponent_hand(hand) {
 
 // Set the appropriate classes for the cards in the opponent's hand
 function draw_opponent_hand(number_of_cards) {
-  mpq.track("Draw opponent hand");
   $("#their-hand .cards li a").empty();
   $("#their-hand .cards li").removeClass("back").removeClass("empty");
   $("#their-hand .cards li:lt(" + number_of_cards + ")").addClass("back");
